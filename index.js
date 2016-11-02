@@ -24,7 +24,7 @@ var saveConfigToFile = (config, file) => {
 
 module.exports = {
   ready: function(skin) {
-    const file = path.join(skin.projectLocation, skin.botfile.configModulesDir, 'skin-messenger.json')
+    const file = path.join(skin.projectLocation, skin.botfile.modulesConfigDir, 'skin-messenger.json')
     const config = loadConfigFromFile(file)
 
     console.log(skin.incoming)
