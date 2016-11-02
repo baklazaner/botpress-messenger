@@ -11,9 +11,9 @@ const normalizeString = function(str) {
 class Messenger extends EventEmitter {
   constructor(options) {
     super();
-    if (!options 
-        || !options.accessToken 
-        || !options.verifyToken 
+    if (!options
+        || !options.accessToken
+        || !options.verifyToken
         || !options.appSecret
         || !options.skin) {
       throw new Error('You need to specify an accessToken, verifyToken, appSecret and skin');
@@ -110,7 +110,7 @@ class Messenger extends EventEmitter {
       })
     );
     if (options && options.typing) {
-      const autoTimeout = (message && message.text) ? message.text.length * 10 : 1000;
+      const autoTimeout = (message && message.text) ? 1000 + message.text.length * 10 : 1000;
       const timeout = (typeof options.typing === 'number') ? options.typing : autoTimeout;
       return this.sendTypingIndicator(recipientId, timeout).then(req);
     }
@@ -167,7 +167,7 @@ class Messenger extends EventEmitter {
   }
 
   setGetStartedButton(action) {
-    const payload = (typeof action === 'string') ? action : 'BOOTBOT_GET_STARTED';
+    const payload = (typeof action === 'string') ? action : 'GET_STARTED';
     if (typeof action === 'function') {
       this.on(`postback:${payload}`, action);
     }
@@ -201,26 +201,9 @@ class Messenger extends EventEmitter {
     }, 'DELETE');
   }
 
-  say(recipientId, message, options) {
-    if (typeof message === 'string') {
-      return this.sendTextMessage(recipientId, message, [], options);
-    } else if (message && message.text) {
-      if (message.quickReplies && message.quickReplies.length > 0) {
-        return this.sendTextMessage(recipientId, message.text, message.quickReplies, options);
-      } else if (message.buttons && message.buttons.length > 0) {
-        return this.sendButtonTemplate(recipientId, message.text, message.buttons, options);
-      }
-    } else if (message && message.attachment) {
-      return this.sendAttachment(recipientId, message.attachment, message.url, message.quickReplies, options);
-    }
-    console.error('Invalid format for .say() message.');
-  }
-
   module(factory) {
     return factory.apply(this, [ this ]);
   }
-
-  
 
   _formatButtons(buttons) {
     return buttons && buttons.map((button) => {
@@ -228,7 +211,7 @@ class Messenger extends EventEmitter {
         return {
           type: 'postback',
           title: button,
-          payload: 'BOOTBOT_BUTTON_' + normalizeString(button)
+          payload: 'BUTTON_' + normalizeString(button)
         };
       } else if (button && button.title) {
         return button;
@@ -243,13 +226,13 @@ class Messenger extends EventEmitter {
         return {
           content_type: 'text',
           title: reply,
-          payload: 'BOOTBOT_QR_' + normalizeString(reply)
+          payload: 'QR_' + normalizeString(reply)
         };
       } else if (reply && reply.title) {
         return {
           content_type: reply.content_type || 'text',
           title: reply.title,
-          payload: reply.payload || 'BOOTBOT_QR_' + normalizeString(reply.title)
+          payload: reply.payload || 'QR_' + normalizeString(reply.title)
         };
       }
       return {};
