@@ -3,11 +3,21 @@ const Messenger = require('./messenger');
 module.exports = {
   ready: function(skin) {
 
+    const users = require('./users')(skin);
+
     const messenger = new Messenger({
       skin: skin,
       accessToken: 'EAAIuc82XAP8BALmmjJ7rD3pbakkzCXpz3Pq311bYAMIYw5nzXW8SoGoNqiZAEqAiHo1HdZA9MrUpgcfc5dp6KsZBi9oq3ZBs4sGorCcod0uZBYsd61HYdfA0SfPv6EZCral46cxNFHmhKI4vb46vAWuEmD3KOuW8ZAimyTXlv1GWAZDZD',
       verifyToken: 'Hello',
       appSecret: 'ffb21fa310eabaac543407bae8404869'
+    });
+
+    messenger.on('message', function(payload) {
+      const userId = payload.sender.id
+      users.getOrFetchUserProfile(userId)
+      .then((profile) => {
+         
+      })
     });
 
     messenger.on('message', function(payload) {
