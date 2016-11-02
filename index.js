@@ -34,7 +34,14 @@ module.exports = {
 
       users.getOrFetchUserProfile(userId)
       .then((profile) => {
-         
+        // push the message to the incoming middleware
+        skin.incoming({
+          platform: 'facebook',
+          type: 'message', // TODO make this more specific
+          user: profile,
+          text: payload.message.text, // TODO make this more specific
+          raw: payload
+        })
       })
     });
 
