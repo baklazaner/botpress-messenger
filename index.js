@@ -1,7 +1,10 @@
 const Messenger = require('./messenger');
+const LRU = require('lru-cache');
 
 module.exports = {
   ready: function(skin) {
+
+    console.log(skin.incoming)
 
     const users = require('./users')(skin);
 
@@ -12,8 +15,23 @@ module.exports = {
       appSecret: 'ffb21fa310eabaac543407bae8404869'
     });
 
+    const messagesCache = LRU({
+      max: 10000,
+      maxAge: 60 * 60 * 1000
+    })
+
     messenger.on('message', function(payload) {
       const userId = payload.sender.id
+      const mid = payload.message.mid
+
+      if(messagesCache.has(mid)) {
+        // We already processed this message
+        return
+      } else {
+        // Mark it as processed
+        messagesCache.set(mid, true)
+      }
+
       users.getOrFetchUserProfile(userId)
       .then((profile) => {
          
