@@ -19,15 +19,19 @@ class Messenger extends EventEmitter {
       throw new Error('You need to specify an accessToken, verifyToken, appSecret and skin');
     }
 
-    this.accessToken = options.accessToken;
-    this.verifyToken = options.verifyToken;
-    this.appSecret = options.appSecret;
-    this.broadcastEchoes = options.broadcastEchoes || false;
+    this.setConfig(options)
 
     this.app = options.skin.getRouter('skin-messenger');
     // TODO Verify request is coming from facebook
 
     this._initWebhook();
+  }
+
+  setConfig(config){
+    this.accessToken = config.accessToken;
+    this.verifyToken = config.verifyToken;
+    this.appSecret = config.appSecret;
+    this.broadcastEchoes = config.broadcastEchoes || false;
   }
 
   sendTextMessage(recipientId, text, quickReplies, options) {
