@@ -10,29 +10,42 @@ const normalizeString = function(str) {
 }
 
 class Messenger extends EventEmitter {
-  constructor(options) {
+  constructor(skin, config) {
     super();
-    if (!options
-        || !options.accessToken
-        || !options.verifyToken
-        || !options.appSecret
-        || !options.skin) {
-      throw new Error('You need to specify an accessToken, verifyToken, appSecret and skin');
+    if (!skin || !config){
+      throw new Error('You need to specify skin and config');
     }
 
-    this.setConfig(options)
+    this.setConfig(config)
 
-    this.app = options.skin.getRouter('skin-messenger');
+    this.app = skin.getRouter('skin-messenger');
     // TODO Verify request is coming from facebook
 
     this._initWebhook();
   }
 
   setConfig(config){
+    if (!config.accessToken || !config.verifyToken || !config.appSecret){
+      throw new Error('You need to specify an accessToken, verifyToken and appSecret');
+    }
+    
     this.accessToken = config.accessToken;
     this.verifyToken = config.verifyToken;
     this.appSecret = config.appSecret;
     this.broadcastEchoes = config.broadcastEchoes || false;
+    this.displayGetStarted = config.displayGetStarted;
+    this.greetingMessage = config.greetingMessage;
+    this.persistentMenu = config.persistentMenu;
+    this.automaticallyMarkAsRead = config.automaticallyMarkAsRead;
+    this.trustedDomains = config.trustedDomains;
+    this.persistentMenuItems = config.persistentMenuItems;
+
+    // TODO: Set all config in a single object
+    this.config = config
+  }
+
+  getConfig(){
+    return this.config
   }
 
   sendTextMessage(recipientId, text, quickReplies, options) {

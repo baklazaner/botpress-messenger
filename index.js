@@ -13,7 +13,16 @@ var loadConfigFromFile = (file) => {
     const config = {
       accessToken : "EAAIuc82XAP8BALmmjJ7rD3pbakkzCXpz3Pq311bYAMIYw5nzXW8SoGoNqiZAEqAiHo1HdZA9MrUpgcfc5dp6KsZBi9oq3ZBs4sGorCcod0uZBYsd61HYdfA0SfPv6EZCral46cxNFHmhKI4vb46vAWuEmD3KOuW8ZAimyTXlv1GWAZDZD",
       verifyToken : "Hello",
-      appSecret : "ffb21fa310eabaac543407bae8404869"
+      appSecret : "ffb21fa310eabaac543407bae8404869",
+      displayGetStarted : false,
+      greetingMessage : "Basic Greeting Message",
+      persistentMenu : false,
+      persistentMenuItems : [
+                              { type: "postback", title: "Text Postback", value: "postback text" },
+                              { type: "url", title: "Text url", value: "http://www.facebook.com" }
+                            ],
+      automaticallyMarkAsRead : false,
+      trustedDomains : ['http://www.facebook.com', 'http://www.google.com']
     }
     saveConfigToFile(config,file)
   }
@@ -56,12 +65,20 @@ module.exports = {
     const file = path.join(skin.projectLocation, skin.botfile.modulesConfigDir, 'skin-messenger.json')
     const config = loadConfigFromFile(file)
 
+<<<<<<< Updated upstream
     messenger = new Messenger({
       skin: skin,
       accessToken: config.accessToken,
       verifyToken: config.verifyToken,
       appSecret: config.appSecret
     });
+=======
+    console.log(skin.incoming)
+
+    const users = require('./users')(skin);
+
+    const messenger = new Messenger(skin, config);
+>>>>>>> Stashed changes
 
     const users = require('./users')(skin, messenger);
 
@@ -97,17 +114,14 @@ module.exports = {
 
     skin.getRouter("skin-messenger")
     .get("/config", (req, res, next) => {
-      res.send(config)
+      res.send(messenger.getConfig())
     })
 
     skin.getRouter("skin-messenger")
     .post("/config", (req, res, next) => {
-      config.accessToken = req.body.accessToken;
-      config.verifyToken = req.body.verifyToken;
-      config.appSecret = req.body.appSecret;
 
-      messenger.setConfig(config)
-      saveConfigToFile(config, file)
+      messenger.setConfig(req.body)
+      saveConfigToFile(messenger.getConfig(), file)
 
       res.sendStatus(200)
     })
