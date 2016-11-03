@@ -5,6 +5,8 @@ const EventEmitter = require('eventemitter2');
 const crypto = require('crypto');
 const fetch = require('node-fetch');
 
+fetch.promise = Promise;
+
 const normalizeString = function(str) {
   return str.replace(/[^a-zA-Z0-9]+/g, '').toUpperCase();
 }
@@ -111,13 +113,13 @@ class Messenger extends EventEmitter {
   sendMessage(recipientId, message, options) {
     const onDelivery = options && options.onDelivery;
     const onRead = options && options.onRead;
-    const req = () => (
-      this.sendRequest({
+    const req = () => this.sendRequest({
         recipient: {
           id: recipientId
         },
         message
-      }).then((json) => {
+      })
+    .then((json) => {
         if (typeof onDelivery === 'function') {
           this.once('delivery', onDelivery);
         }
@@ -126,7 +128,7 @@ class Messenger extends EventEmitter {
         }
         return json;
       })
-    );
+
     if (options && options.typing) {
       const autoTimeout = (message && message.text) ? 500 + message.text.length * 10 : 1000;
       const timeout = (typeof options.typing === 'number') ? options.typing : autoTimeout;
@@ -146,11 +148,8 @@ class Messenger extends EventEmitter {
       },
       body: JSON.stringify(body)
     })
-    .then(res => {
-      // TODO Catch errors here (400+)
-      return res.json()}
-      )
-    .catch(err => console.log(`Error sending message: ${err}`));
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
   }
 
   sendThreadRequest(body, method) {
@@ -177,6 +176,7 @@ class Messenger extends EventEmitter {
   getUserProfile(userId) {
     const url = `https://graph.facebook.com/v2.7/${userId}?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=${this.accessToken}`;
     return fetch(url)
+      .then(this._handleFacebookResponse)
       .then(res => res.json())
       .catch(err => console.log(`Error getting user profile: ${err}`));
   }
@@ -184,6 +184,7 @@ class Messenger extends EventEmitter {
   setWhitelistedDomains(domains) {
     const url = `https://graph.facebook.com/v2.7/me/thread_settings?fields=whitelisted_domains&access_token=${this.accessToken}`;
     return fetch(url)
+      .then(this._handleFacebookResponse)
       .then(res => res.json())
       .then((domains) => {
         console.log('Domains', domains)
@@ -317,6 +318,24 @@ class Messenger extends EventEmitter {
     const userId = event.sender.id;
     let captured = false;
     return captured;
+  }
+
+  _handleFacebookResponse(res) {
+    if(res.status < 400) {
+      return res
+    }
+    
+    let errorMessage = "An error has been returned by Facebook API."
+    errorMessage += '\nStatus: ' + res.status + ' (' + res.statusText + ')'
+
+    return Promise.resolve(true)
+    .then(() => res.json())
+    .then(json => {
+      errorMessage += '\n' + json.error.message
+    })
+    .finally(() => {
+      throw new Error(errorMessage)
+    })
   }
 
   _initWebhook() {

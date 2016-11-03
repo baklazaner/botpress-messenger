@@ -37,8 +37,9 @@ let messenger = null;
 
 module.exports = {
   outgoing: function(event, next) {
+    
     if(event.platform !== 'facebook') {
-      next()
+      return next()
     }
 
     if(!messenger) {
@@ -65,7 +66,7 @@ module.exports = {
     const file = path.join(skin.projectLocation, skin.botfile.modulesConfigDir, 'skin-messenger.json')
     const config = loadConfigFromFile(file)
     
-    const messenger = new Messenger(skin, config);
+    messenger = new Messenger(skin, config);
     
     const users = require('./users')(skin, messenger);
 
