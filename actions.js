@@ -199,7 +199,7 @@ const createPersistentMenu = (elements) => {
   }
 }
 
-createGreetingText = (text) => {
+const createGreetingText = (text) => {
   if(text && text.length > 160) {
     throw new Error('Greeting text must be less than 160 chars')
   }

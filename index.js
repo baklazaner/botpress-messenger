@@ -64,22 +64,9 @@ module.exports = {
   ready: function(skin) {
     const file = path.join(skin.projectLocation, skin.botfile.modulesConfigDir, 'skin-messenger.json')
     const config = loadConfigFromFile(file)
-
-<<<<<<< Updated upstream
-    messenger = new Messenger({
-      skin: skin,
-      accessToken: config.accessToken,
-      verifyToken: config.verifyToken,
-      appSecret: config.appSecret
-    });
-=======
-    console.log(skin.incoming)
-
-    const users = require('./users')(skin);
-
+    
     const messenger = new Messenger(skin, config);
->>>>>>> Stashed changes
-
+    
     const users = require('./users')(skin, messenger);
 
     const messagesCache = LRU({
