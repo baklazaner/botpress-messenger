@@ -1,30 +1,18 @@
-const _ = require('lodash');
+'use strict'
 
-'use strict';
-
-// pipeText(userId, text, options)
-// pipeAttachment(userId, type, url, options)
-// pipeTemplate(userId, payload, options)
-// pipeTyping(userId, boolean|number)
-// pipeSeen(userId)
-
-// >> null here deletes the elements
-// pipePersistentMenu([elements]|null)
-// pipeGreetingMessage(text|null)
-// pipeGetStarted(boolean)
-// pipeWhitelistedDomains([domains]|null)
+const _ = require('lodash')
 
 const validateUserId = (userId) => {
   if (!/[0-9]+/.test(userId)) {
     throw new Error('Invalid userId')
   }
-};
+}
 
 const validateText = (text) => {
   if(typeof(text) !== 'string' || text.length > 300) {
     throw new Error('Text must be a string less than 300 chars.')
   }
-};
+}
 
 const validateQuickReplies = (quick_replies) => {
   if (!_.isArray(quick_replies)) {
@@ -32,7 +20,7 @@ const validateQuickReplies = (quick_replies) => {
   }
 
   _.forEach(quick_replies, validateQuickReply)
-};
+}
 
 const validateQuickReply = (quick_reply) => {
   if(typeof(quick_reply) !== 'string') {
@@ -41,13 +29,13 @@ const validateQuickReply = (quick_reply) => {
         'with a title.')
     }
   }
-};
+}
 
 const validateTyping = (typing) => {
   if (!_.isBoolean(typing) && !_.isNumber(typing)) {
     throw new Error('Expected typing to be a boolean of a number')
   }
-};
+}
 
 const validateAttachmentType = (type) => {
   if(typeof(type) !== 'string') {
@@ -57,13 +45,13 @@ const validateAttachmentType = (type) => {
   if(!_.includes(['image', 'video', 'audio', 'file'], type.toLowerCase())) {
     throw new Error('Invalid attachment type')
   }
-};
+}
 
 const validateUrl = (url) => {
   if(typeof(url) !== 'string') {
     throw new Error('Expected URL to be a string')
   }
-};
+}
 
 const validateTemplatePayload = (payload) => {
   if(!_.isPlainObject(payload)) {
@@ -73,7 +61,7 @@ const validateTemplatePayload = (payload) => {
   if(typeof(payload.template_type) !== 'string') {
     throw new Error('"template_type" must be set')
   }
-};
+}
 
 const validatePersistentMenu = (elements) => {
   if(!_.isArray(elements)) {
@@ -110,7 +98,7 @@ const createText = (userId, text, options) => {
       quick_replies: options && options.quick_replies
     }
   }
-};
+}
 
 const createAttachment = (userId, type, url, options) => {
   validateUserId(userId)
@@ -137,7 +125,7 @@ const createAttachment = (userId, type, url, options) => {
       quick_replies: options && options.quick_replies
     }
   }
-};
+}
 
 const createTemplate = (userId, payload, options) => {
   validateUserId(userId)
@@ -157,7 +145,7 @@ const createTemplate = (userId, payload, options) => {
       typing: (options && options.typing)
     }
   }
-};
+}
 
 const createTyping = (userId, typing) => {
   validateUserId(userId)
@@ -172,7 +160,7 @@ const createTyping = (userId, typing) => {
       typing: typing
     }
   }
-};
+}
 
 const createSeen = (userId) => {
   validateUserId(userId)
@@ -185,7 +173,7 @@ const createSeen = (userId) => {
       to: userId
     }
   }
-};
+}
 
 const createPersistentMenu = (elements) => {
   if(!elements) {
@@ -209,7 +197,7 @@ const createPersistentMenu = (elements) => {
       elements: elements
     }
   }
-};
+}
 
 createGreetingText = (text) => {
   if(text && text.length > 160) {
@@ -224,7 +212,7 @@ createGreetingText = (text) => {
       text: text
     }
   }
-};
+}
 
 const createGetStarted = (postback) => {
   return {
@@ -236,7 +224,7 @@ const createGetStarted = (postback) => {
       postback: postback
     }
   }
-};
+}
 
 const createWhitelistedDomains = (domains) => {
   if(domains && !_.every(domains, _.isString)) {
@@ -251,7 +239,7 @@ const createWhitelistedDomains = (domains) => {
       domains: domains
     }
   }
-};
+}
 
 module.exports = {
   createText,
@@ -263,4 +251,4 @@ module.exports = {
   createPersistentMenu,
   createGreetingText,
   createWhitelistedDomains
-};
+}

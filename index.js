@@ -56,10 +56,6 @@ module.exports = {
     const file = path.join(skin.projectLocation, skin.botfile.modulesConfigDir, 'skin-messenger.json')
     const config = loadConfigFromFile(file)
 
-    console.log(skin.incoming)
-
-    
-
     messenger = new Messenger({
       skin: skin,
       accessToken: config.accessToken,
