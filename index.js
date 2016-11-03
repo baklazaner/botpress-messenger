@@ -1,9 +1,11 @@
 var path = require('path')
 var fs = require('fs')
+const LRU = require('lru-cache')
+const _ = require('lodash')
 
-const Messenger = require('./messenger');
-const LRU = require('lru-cache');
-
+const Messenger = require('./messenger')
+const actions = require('./actions')
+const outgoing = require('./outgoing')
 
 var loadConfigFromFile = (file) => {
 
@@ -22,21 +24,50 @@ var saveConfigToFile = (config, file) => {
   fs.writeFileSync(file, JSON.stringify(config))
 }
 
+let messenger = null;
+
 module.exports = {
+  outgoing: function(event, next) {
+    if(event.platform !== 'facebook') {
+      next()
+    }
+
+    if(!messenger) {
+      return next('Module is not initialized yet.')
+    }
+    
+    if(!outgoing[event.type]) {
+      return next('Unsupported event type: ' + event.type)
+    }
+
+    outgoing[event.type](event, next, messenger)
+  },
+  init: function(skin) {
+    skin.messenger = {}
+    _.forIn(actions, (action, name) => {
+      var pipeName = name.replace(/^create/, 'pipe')
+      skin.messenger[pipeName] = function() {
+        var msg = action.apply(this, arguments)
+        skin.outgoing(msg)
+      }
+    })
+  },
   ready: function(skin) {
     const file = path.join(skin.projectLocation, skin.botfile.modulesConfigDir, 'skin-messenger.json')
     const config = loadConfigFromFile(file)
 
     console.log(skin.incoming)
 
-    const users = require('./users')(skin);
+    
 
-    const messenger = new Messenger({
+    messenger = new Messenger({
       skin: skin,
       accessToken: config.accessToken,
       verifyToken: config.verifyToken,
       appSecret: config.appSecret
     });
+
+    const users = require('./users')(skin, messenger);
 
     const messagesCache = LRU({
       max: 10000,
@@ -66,11 +97,6 @@ module.exports = {
           raw: payload
         })
       })
-    });
-
-    messenger.on('message', function(payload) {
-      console.log(payload)
-      messenger.sendTextMessage(payload.sender.id, 'you said: ' + payload.message.text, null, {typing:true})
     });
 
     skin.getRouter("skin-messenger")

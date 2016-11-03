@@ -1,5 +1,6 @@
 'use strict';
 
+const Promise = require('bluebird');
 const EventEmitter = require('eventemitter2');
 const crypto = require('crypto');
 const fetch = require('node-fetch');
@@ -85,7 +86,7 @@ class Messenger extends EventEmitter {
     return this.sendMessage(recipientId, message, options);
   }
 
-  sendAction(recipientId, action, options) {
+  sendAction(recipientId, action) {
     return this.sendRequest({
       recipient: {
         id: recipientId
@@ -114,7 +115,7 @@ class Messenger extends EventEmitter {
       })
     );
     if (options && options.typing) {
-      const autoTimeout = (message && message.text) ? 1000 + message.text.length * 10 : 1000;
+      const autoTimeout = (message && message.text) ? 500 + message.text.length * 10 : 1000;
       const timeout = (typeof options.typing === 'number') ? options.typing : autoTimeout;
       return this.sendTypingIndicator(recipientId, timeout).then(req);
     }
@@ -144,16 +145,20 @@ class Messenger extends EventEmitter {
   }
 
   sendTypingIndicator(recipientId, milliseconds) {
-    const timeout = isNaN(milliseconds) ? 0 : milliseconds;
-    if (milliseconds > 20000) {
-      milliseconds = 20000;
-      console.error('sendTypingIndicator: max milliseconds value is 20000 (20 seconds)');
+    let timeout = !milliseconds || isNaN(milliseconds) ? 0 : milliseconds
+    timeout = Math.min(20000, timeout)
+
+    if(milliseconds === true) {
+      timeout = 1000
     }
-    return new Promise((resolve, reject) => {
-      return this.sendAction(recipientId, 'typing_on').then(() => {
-        setTimeout(() => this.sendAction(recipientId, 'typing_off').then((json) => resolve(json)), timeout);
-      });
-    });
+
+    const before = timeout > 0
+      ? Promise.resolve(this.sendAction(recipientId, 'typing_on'))
+      : Promise.resolve(true)
+
+    return before
+    .delay(timeout)
+    .then(() => this.sendAction(recipientId, 'typing_off'))
   }
 
   getUserProfile(userId) {
@@ -163,11 +168,26 @@ class Messenger extends EventEmitter {
       .catch(err => console.log(`Error getting user profile: ${err}`));
   }
 
+  setWhitelistedDomains(domains) {
+    const url = `https://graph.facebook.com/v2.7/me/thread_settings?fields=whitelisted_domains&access_token=${this.accessToken}`;
+    return fetch(url)
+      .then(res => res.json())
+      .then((domains) => {
+        console.log('Domains', domains)
+      })
+  }
+
   setGreetingText(text) {
     return this.sendThreadRequest({
       setting_type: 'greeting',
       greeting: { text }
     });
+  }
+
+  deleteGreetingText() {
+   return this.sendThreadRequest({
+      setting_type: 'greeting'
+    }, 'DELETE'); 
   }
 
   setGetStartedButton(action) {

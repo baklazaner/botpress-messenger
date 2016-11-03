@@ -4,7 +4,7 @@ const Promise = require('bluebird');
 const path = require('path');
 const fs = require('fs');
 
-module.exports = function(skin) {
+module.exports = function(skin, messenger) {
 
   const filename = path.join(
     skin.dataLocation, 
