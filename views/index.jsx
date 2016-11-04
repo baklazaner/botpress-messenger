@@ -27,12 +27,14 @@ export default class MessengerModule extends React.Component {
 
     this.handleChange = this.handleChange.bind(this)
     this.handleChangeCheckBox = this.handleChangeCheckBox.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleSaveChanges = this.handleSaveChanges.bind(this)
     this.handleRemoveFromList = this.handleRemoveFromList.bind(this)
     this.handleAddToTrustedDomainsList = this.handleAddToTrustedDomainsList.bind(this)
     this.handleAddToPersistentMenuList = this.handleAddToPersistentMenuList.bind(this)
     this.handleValidation = this.handleValidation.bind(this)
     this.handleConnection = this.handleConnection.bind(this)
+    this.renderPersistentMenuItem = this.renderPersistentMenuItem.bind(this)
+    this.renderDomainElement = this.renderDomainElement.bind(this)
   }
 
   componentDidMount(){
@@ -45,7 +47,7 @@ export default class MessengerModule extends React.Component {
     });
   }
 
-  handleSubmit(event) {
+  handleSaveChanges(event) {
     this.setState({loading:true})
 
     axios.post("/api/skin-messenger/config", _.omit(this.state, 'loading'))
@@ -92,7 +94,7 @@ export default class MessengerModule extends React.Component {
 
   handleConnection(event){
     this.setState({ connected: !this.state.connected })
-    setImmediate(() => this.handleSubmit(event))
+    setImmediate(() => this.handleSaveChanges(event))
   }
 
   handleChangeCheckBox(event){
@@ -117,21 +119,29 @@ export default class MessengerModule extends React.Component {
     }
   }
 
-  handleAddToPersistentMenuList(name){
+  handleAddToPersistentMenuList() {
     this.setState({message:'warning'})
 
-    var item = {
-      type: document.getElementById('newPersistantMenuType').value,
-      title: document.getElementById('newPersistantMenuTitle').value,
-      value: document.getElementById('newPersistantMenuValue').value
+    const type = ReactDOM.findDOMNode(this.newPersistentMenuType)
+    const title = ReactDOM.findDOMNode(this.newPersistentMenuTitle)
+    const value = ReactDOM.findDOMNode(this.newPersistentMenuValue)
+    const item = {
+      type: type && type.value,
+      title: title && title.value,
+      value: value && value.value
     }
 
-    if(item.type !== '' && item.title !== '' && item.value !== ''){
-      this.setState({[name]: _.concat(this.state[name], item)})
-      document.getElementById('newPersistantMenuType').selected = 'postback'
-      document.getElementById('newPersistantMenuTitle').value = ''
-      document.getElementById('newPersistantMenuValue').value = ''
+    if(_.some(_.values(item), _.isEmpty)) {
+      return
     }
+
+    this.setState({
+      persistentMenuItems: _.concat(this.state.persistentMenuItems, item)
+    })
+
+    type.selected = 'postback'
+    title.value = ''
+    value.value = ''
   }
 
   renderLabel(label){
@@ -147,7 +157,7 @@ export default class MessengerModule extends React.Component {
       <FormGroup>
         {this.renderLabel(label)}
         <Col sm={7}>
-          <FormControl id={name} name={name} {...props} type="text"
+          <FormControl name={name} {...props} type="text"
             value={this.state[name]} onChange={this.handleChange.bind(this)} />
         </Col>
       </FormGroup>
@@ -159,8 +169,10 @@ export default class MessengerModule extends React.Component {
       <FormGroup>
         {this.renderLabel(label)}
         <Col sm={7}>
-          <FormControl id={name} name={name} {...props} componentClass="textarea" rows="3"
-            value={this.state[name]} onChange={this.handleChange.bind(this)}/>
+          <FormControl name={name} {...props}
+            componentClass="textarea" rows="3"
+            value={this.state[name]}
+            onChange={this.handleChange.bind(this)} />
         </Col>
       </FormGroup>
     )
@@ -171,29 +183,33 @@ export default class MessengerModule extends React.Component {
       <FormGroup>
         {this.renderLabel(label)}
         <Col sm={7}>
-          <Checkbox name={name} checked={this.state[name]} onChange={this.handleChangeCheckBox}/>
+          <Checkbox name={name} checked={this.state[name]} 
+            onChange={this.handleChangeCheckBox} />
         </Col>
       </FormGroup>
     )
   }
 
+  renderDomainElement(domain) {
+    const removeHandler = () => this.handleRemoveFromList(domain, "trustedDomains")
+
+    return <ListGroupItem key={domain}>
+      {domain}
+      <Glyphicon className="pull-right" glyph="remove" onClick={removeHandler} />
+    </ListGroupItem>
+  }
+
   renderTrustedDomainList(){
+    const trustedDomainElements = this.state.trustedDomains.map(this.renderDomainElement)
+
     return (
       <div>
         <FormGroup>
           {this.renderLabel("Trusted Domains")}
           <Col sm={7}>
-            <ControlLabel>Current list of trusted domains:</ControlLabel>
+            <ControlLabel>Current trusted domains:</ControlLabel>
             <ListGroup>
-              {this.state.trustedDomains.map((value) => {
-                return (
-                  <ListGroupItem key={value}>
-                    {value}
-                    <Glyphicon className="pull-right" glyph="remove"
-                    onClick={() => this.handleRemoveFromList(value, "trustedDomains")} />
-                </ListGroupItem>
-                )
-              })}
+              {trustedDomainElements}          
             </ListGroup>
           </Col>
         </FormGroup>
@@ -210,36 +226,39 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderPersistentMenuList(label, name){
+  renderPersistentMenuItem(item) {
+    const handleRemove = () => this.handleRemoveFromList(item, 'persistentMenuItems')
+    return <ListGroupItem key={item.title}>
+        {item.type + " | " + item.title + " | " + item.value}
+        <Glyphicon 
+          className="pull-right" 
+          glyph="remove" 
+          onClick={handleRemove} />
+      </ListGroupItem>
+  }
+
+  renderPersistentMenuList() {
     return (
       <div>
         <FormGroup>
-          {this.renderLabel(label)}
-          <Col sm={7}>
+          <Col smOffset={3} sm={7}>
             <ControlLabel>Current menu items:</ControlLabel>
             <ListGroup>
-              {this.state[name].map((item) => {
-                return (
-                  <ListGroupItem key={item.title}>
-                    {item.type + " - " + item.title + " - " + item.value}
-                    <Glyphicon  className="pull-right" glyph="remove" onClick={() => this.handleRemoveFromList(item, name)} />
-                  </ListGroupItem>
-                )
-              })}
+              {this.state.persistentMenuItems.map(this.renderPersistentMenuItem)}
             </ListGroup>
           </Col>
         </FormGroup>
         <FormGroup>
           <Col smOffset={3} sm={7}>
             <ControlLabel>Add a new item:</ControlLabel>
-            <FormControl id="newPersistantMenuType" componentClass="select" placeholder="postback">
+            <FormControl ref={r => this.newPersistentMenuType = r} componentClass="select" placeholder="postback">
               <option value="postback">Postback</option>
               <option value="url">URL</option>
             </FormControl>
-            <FormControl id="newPersistantMenuTitle" type="text" placeholder="Title"/>
-            <FormControl id="newPersistantMenuValue" type="text" placeholder="Value"/>
-            <Button bsStyle="primary" active onClick={() => this.handleAddToPersistentMenuList(name)}>
-              <Glyphicon glyph="plus" /> Add
+            <FormControl ref={r => this.newPersistentMenuTitle = r} type="text" placeholder="Title"/>
+            <FormControl ref={r => this.newPersistentMenuValue = r} type="text" placeholder="Value"/>
+            <Button bsStyle="primary" active onClick={() => this.handleAddToPersistentMenuList()}>
+              <Glyphicon glyph="plus"/> Add
             </Button>
           </Col>
         </FormGroup>
@@ -247,11 +266,11 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderSaveButton(){
+  renderSaveButton() {
     return (
       <FormGroup>
         <Col sm={12}>
-          <Button className="pull-right" bsStyle="success" active onClick={this.handleSubmit}>
+          <Button className="pull-right" bsStyle="success" active onClick={this.handleSaveChanges}>
             <Glyphicon glyph="floppy-disk"/> Save
           </Button>
         </Col>
@@ -265,53 +284,35 @@ export default class MessengerModule extends React.Component {
     </p>
   }
 
-  renderInnerValidation(name){
-    if(this.state[name]){
-      return (
-          <ControlLabel>All your connection settings are valid.</ControlLabel>
-      )
-    } else {
-      return (
-        <Button bsStyle="primary" active onClick={this.handleValidation}>
-          Validate now!
-        </Button>
-      )
-    }
-  }
+  renderConnectionValidation() {
+    const validatedText = <ControlLabel>All your connection settings are valid.</ControlLabel>
+    const button = <Button bsStyle="primary" active onClick={this.handleValidation}>Validate now!</Button>
 
-  renderValidationButton(label, name){
-    return (
-      <FormGroup>
-        {this.renderLabel(label)}
+    return <FormGroup>
+        {this.renderLabel('Validation')}
         <Col sm={7}>
-          {this.renderInnerValidation(name)}
+          {this.state.validated ? validatedText : button}
         </Col>
       </FormGroup>
+  }
+
+  renderConnectionButton() {
+    const disconnectButton = (
+      <Button bsStyle="danger" active onClick={this.handleConnection}>
+        <Glyphicon glyph="stop"/> Disconnect
+      </Button>
     )
-  }
 
-  renderInnerConnection(name){
-    if(this.state[name]){
-      return (
-        <Button bsStyle="danger" active onClick={this.handleConnection}>
-          <Glyphicon glyph="stop"/> Disconnect
-        </Button>
-      )
-    } else {
-       return (
-         <Button bsStyle="success" active onClick={this.handleConnection}>
-           <Glyphicon glyph="play"/> Connect now!
-         </Button>
-       )
-    }
+    const connectButton = (
+       <Button bsStyle="success" active onClick={this.handleConnection}>
+         <Glyphicon glyph="play"/> Connect now!
+       </Button>
+     )
 
-  }
-
-  renderConnectionButton(name){
     return (
       <FormGroup>
         <Col smOffset={3} sm={7}>
-          {this.renderInnerConnection(name)}
+          {this.state.connected ? disconnectButton : connectButton}
         </Col>
       </FormGroup>
     )
@@ -321,63 +322,56 @@ export default class MessengerModule extends React.Component {
     return (
       <Form horizontal>
         {this.state.error && this.renderErrorMessage()}
+
         <Panel header="Connexion">
-          {this.renderTextInput("Application ID", "applicationID", {disabled: this.state.connected})}
-          {this.renderTextAreaInput("Access Token", "accessToken", {disabled: this.state.connected})}
-          {this.renderTextInput("Verify Token", "verifyToken", {disabled: this.state.connected})}
-          {this.renderTextInput("App Secret", "appSecret", {disabled: this.state.connected})}
-          {this.renderValidationButton("Validation", "validated")}
-          {this.state.validated && this.renderConnectionButton("connected")}
+          {this.renderTextInput("Application ID", "applicationID", { disabled: this.state.connected })}
+          {this.renderTextAreaInput("Access Token", "accessToken", { disabled: this.state.connected })}
+          {this.renderTextInput("Verify Token", "verifyToken", { disabled: this.state.connected })}
+          {this.renderTextInput("App Secret", "appSecret", { disabled: this.state.connected })}
+          {this.renderConnectionValidation()}
+          {this.state.validated && this.renderConnectionButton()}
         </Panel>
-        <Panel header="General">
-          {this.renderCheckBox("Display Get Started", "displayGetStarted")}
-          {this.renderTextAreaInput("Greating message", "greetingMessage")}
-          {this.renderCheckBox("Persistant menu", "persistentMenu")}
-          {this.state.persistentMenu && this.renderPersistentMenuList("Menu items", "persistentMenuItems")}
-          {this.renderCheckBox("Automatically mark as read", "automaticallyMarkAsRead")}
+
+        <Panel header='General'>
+          {this.renderCheckBox('Display Get Started', 'displayGetStarted')}
+          {this.renderTextAreaInput('Greating message', 'greetingMessage')}
+          {this.renderCheckBox('Persistent menu', 'persistentMenu')}
+          {this.state.persistentMenu && this.renderPersistentMenuList()}
+          {this.renderCheckBox('Automatically mark as read', 'automaticallyMarkAsRead')}
         </Panel>
-        <Panel header="Advanced">
+
+        <Panel header='Advanced'>
           {this.renderTrustedDomainList()}
         </Panel>
+
         {this.renderSaveButton()}
       </Form>
     )
   }
 
   renderMainPanel(){
-    if(this.state.message && this.state.message === 'success'){
-      return (
-        <Panel header="Messenger settings - New settings have been updated correctly!" bsStyle="success">
-          {this.renderForm()}
-        </Panel>
-      )
+    let style = 'info'
+    let header = 'Messenger settings'
+
+    if(this.state.message && this.state.message === 'success') {
+      style = 'success'
+      header += ' | New settings have been updated successfully'
     } else if (this.state.message && this.state.message === 'warning') {
-      return (
-        <Panel header="Messenger settings - Be carreful, some changes are not saved..." bsStyle="warning">
-          {this.renderForm()}
-        </Panel>
-      )
+      style = 'warning'
+      header += ' | You have unsaved changes'
     } else if (this.state.error) {
-      return (
-        <Panel header="Messenger settings - Error updating settings" bsStyle="danger">
-          {this.renderForm()}
-        </Panel>
-      )
-    } else {
-      return (
-        <Panel header="Messenger settings" bsStyle="info">
-          {this.renderForm()}
-        </Panel>
-      )
+      style = 'danger'
+      hander += ' | Error updating settings'
     }
+    
+    return <Panel header={header} bsStyle={style}>
+      {this.renderForm()}
+    </Panel>
   }
 
   render() {
-    if(this.state.loading) return null;
-    return (
-      <div>
-        {this.renderMainPanel()}
-      </div>
-    )
+    return <div>
+      {this.state.loading ? null : this.renderMainPanel()}
+    </div>
   }
 }
