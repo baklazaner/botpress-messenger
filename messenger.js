@@ -45,7 +45,6 @@ class Messenger extends EventEmitter {
 
     // TODO: Set all config in a single object
     this.config = config
-    this._reformatPersistentMenuItems()
   }
 
   getConfig(){
@@ -186,16 +185,28 @@ class Messenger extends EventEmitter {
     return fetch(url)
       .then(this._handleFacebookResponse)
       .then(res => res.json())
-      .then((json) => json.data[0].whitelisted_domains)
-      .then((oldDomains) => fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          setting_type: 'domain_whitelisting',
-          whitelisted_domains: oldDomains,
-          domain_action_type: 'remove'
+      .then((json) => {
+        if(json && json.data && json.data[0]) {
+          return json.data[0].whitelisted_domains
+        } else {
+          return []
+        }
+      })
+      .then((oldDomains) => {
+        if(!oldDomains || !oldDomains.length) {
+          return
+        }
+
+        fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            setting_type: 'domain_whitelisting',
+            whitelisted_domains: oldDomains,
+            domain_action_type: 'remove'
+          })
         })
-      }))
+      })
       .then(this._handleFacebookResponse)
       .then(() => fetch(url, {
         method: 'POST',
@@ -266,8 +277,9 @@ class Messenger extends EventEmitter {
       ? this.deleteGreetingText()
       : this.setGreetingText(this.greetingMessage)
 
+    const items = this._reformatPersistentMenuItems(this.persistentMenuItems)
     const updatePersistentMenu = () => this.persistentMenu
-      ? this.setPersistentMenu(this.persistentMenuItems)
+      ? this.setPersistentMenu(items)
       : this.deletePersistentMenu()
 
     const updateTrustedDomains = () => this.setWhitelistedDomains(this.trustedDomains)
@@ -372,6 +384,8 @@ class Messenger extends EventEmitter {
   }
 
   _handleFacebookResponse(res) {
+    if(!res) return
+
     if(res.status < 400) {
       return res
     }
@@ -461,13 +475,14 @@ class Messenger extends EventEmitter {
 
   _reformatPersistentMenuItems() {
     if(this.persistentMenu && this.persistentMenuItems) {
-      this.persistentMenuItems = this.persistentMenuItems.map((item) => {
+      return this.persistentMenuItems.map((item) => {
         
         if(item.value && item.type === 'postback') {
           item.payload = item.value
           delete item.value
-        } else if(item.value && item.type === 'web_url') {
+        } else if(item.value && item.type === 'url') {
           item.url = item.value
+          item.type = 'web_url'
           delete item.value
         }
         return item

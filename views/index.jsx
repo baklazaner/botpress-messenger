@@ -60,8 +60,15 @@ export default class MessengerModule extends React.Component {
        this.setState({
          message:'success',
          loading:false,
+         error: null,
          ...res.data
        })
+     })
+     .catch((err) => {
+      this.setState({
+        loading: false,
+        error: err.response.data.message
+      })
      });
    }
 
@@ -236,9 +243,16 @@ export default class MessengerModule extends React.Component {
     )
   }
 
+  renderErrorMessage() {
+    return <p className={style.errorMessage}>
+      {this.state.error}
+    </p>
+  }
+
   renderForm(){
     return (
       <Form horizontal>
+        {this.state.error && this.renderErrorMessage()}
         <Panel header="Connexion">
           {this.renderTextAreaInput("Access Token", "accessToken")}
           {this.renderTextInput("Verify Token", "verifyToken")}
@@ -268,7 +282,13 @@ export default class MessengerModule extends React.Component {
       )
     } else if (this.state.message && this.state.message === 'warning') {
       return (
-        <Panel header="Messenger settings- Be carreful, some changes are not saved..." bsStyle="warning">
+        <Panel header="Messenger settings - Be carreful, some changes are not saved..." bsStyle="warning">
+          {this.renderForm()}
+        </Panel>
+      )
+    } else if (this.state.error) {
+      return (
+        <Panel header="Messenger settings - Error updating settings" bsStyle="danger">
           {this.renderForm()}
         </Panel>
       )
