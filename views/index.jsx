@@ -121,7 +121,7 @@ export default class MessengerModule extends React.Component {
     this.setState({
       message: 'warning',
       ngrok: !this.state.ngrok
-    })  
+    })
   }
 
   handleRemoveFromList(value, name){
@@ -165,18 +165,18 @@ export default class MessengerModule extends React.Component {
     value.value = ''
   }
 
-  renderLabel(label){
+  renderLabel(label, link){
     return (
       <Col componentClass={ControlLabel} sm={3}>
-        {label}
+        {label} <small>(<a href={link}>?</a>)</small>
       </Col>
     )
   }
 
-  renderTextInput(label, name, props = {}){
+  renderTextInput(label, name, link, props = {}){
     return (
       <FormGroup>
-        {this.renderLabel(label)}
+        {this.renderLabel(label, link)}
         <Col sm={7}>
           <FormControl name={name} {...props} type="text"
             value={this.state[name]} onChange={this.handleChange} />
@@ -201,7 +201,7 @@ export default class MessengerModule extends React.Component {
 
     return (
       <FormGroup validationState={getValidationState()}>
-        {this.renderLabel('Hostname')}
+        {this.renderLabel('Hostname', "#hostname")}
         <Col sm={7}>
           <InputGroup>
             <InputGroup.Addon>{prefix}</InputGroup.Addon>
@@ -218,7 +218,7 @@ export default class MessengerModule extends React.Component {
   renderNGrokCheckbox(props){
     return (
       <FormGroup>
-        {this.renderLabel('Use ngrok')}
+        {this.renderLabel('Use ngrok', '#hgrok')}
         <Col sm={7}>
           <Checkbox name='ngrok' {...props} checked={this.state.ngrok}
             onChange={this.handleChangeNGrokCheckBox} />
@@ -227,10 +227,10 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderTextAreaInput(label, name, props = {}){
+  renderTextAreaInput(label, name, link, props = {}){
     return (
       <FormGroup>
-        {this.renderLabel(label)}
+        {this.renderLabel(label, link)}
         <Col sm={7}>
           <FormControl name={name} {...props}
             componentClass="textarea" rows="3"
@@ -241,10 +241,10 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderCheckBox(label, name){
+  renderCheckBox(label, name, link){
     return (
       <FormGroup>
-        {this.renderLabel(label)}
+        {this.renderLabel(label, link)}
         <Col sm={7}>
           <Checkbox name={name} checked={this.state[name]}
             onChange={this.handleChangeCheckBox} />
@@ -268,7 +268,7 @@ export default class MessengerModule extends React.Component {
     return (
       <div>
         <FormGroup>
-          {this.renderLabel("Trusted Domains")}
+          {this.renderLabel("Trusted Domains", "#trusteddomains")}
           <Col sm={7}>
             <ControlLabel>Current trusted domains:</ControlLabel>
             <ListGroup>
@@ -352,7 +352,7 @@ export default class MessengerModule extends React.Component {
     const button = <Button bsStyle="primary" active onClick={this.handleValidation}>Validate now!</Button>
 
     return <FormGroup>
-        {this.renderLabel('Validation')}
+        {this.renderLabel('Validation', '#validation')}
         <Col sm={7}>
           {this.state.validated ? validatedText : button}
         </Col>
@@ -387,9 +387,9 @@ export default class MessengerModule extends React.Component {
         {this.state.error && this.renderErrorMessage()}
 
         <Panel header="Connexion">
-          {this.renderTextInput("Application ID", "applicationID", { disabled: this.state.connected })}
-          {this.renderTextAreaInput("Access Token", "accessToken", { disabled: this.state.connected })}
-          {this.renderTextInput("App Secret", "appSecret", { disabled: this.state.connected })}
+          {this.renderTextInput('Application ID', 'applicationID', '#applicationid', { disabled: this.state.connected })}
+          {this.renderTextAreaInput('Access Token', 'accessToken', '#accesstoken', { disabled: this.state.connected })}
+          {this.renderTextInput('App Secret', 'appSecret', '#appsecret', { disabled: this.state.connected })}
           {this.renderHostnameTextInput({ disabled: (this.state.ngrok || this.state.connected) })}
           {this.renderNGrokCheckbox( {disabled: this.state.connected} )}
           {this.renderConnectionValidation()}
@@ -397,11 +397,11 @@ export default class MessengerModule extends React.Component {
         </Panel>
 
         <Panel header='General'>
-          {this.renderCheckBox('Display Get Started', 'displayGetStarted')}
-          {this.renderTextAreaInput('Greating message', 'greetingMessage')}
-          {this.renderCheckBox('Persistent menu', 'persistentMenu')}
+          {this.renderCheckBox('Display Get Started', 'displayGetStarted', '#displaygetstarted')}
+          {this.renderTextAreaInput('Greating message', 'greetingMessage', '#greetingmessage')}
+          {this.renderCheckBox('Persistent menu', 'persistentMenu', '#persistantmenu')}
           {this.state.persistentMenu && this.renderPersistentMenuList()}
-          {this.renderCheckBox('Automatically mark as read', 'automaticallyMarkAsRead')}
+          {this.renderCheckBox('Automatically mark as read', 'automaticallyMarkAsRead', '#automaticallymarkasread')}
         </Panel>
 
         <Panel header='Advanced'>
@@ -425,8 +425,10 @@ export default class MessengerModule extends React.Component {
       header += ' | You have unsaved changes'
     } else if (this.state.error) {
       style = 'danger'
-      hander += ' | Error updating settings'
+      header += ' | Error updating settings'
     }
+    header += ' | '
+
 
     return <Panel header={header} bsStyle={style}>
       {this.renderForm()}
