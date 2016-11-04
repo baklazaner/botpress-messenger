@@ -4,6 +4,7 @@ const Promise = require('bluebird');
 const EventEmitter = require('eventemitter2');
 const crypto = require('crypto');
 const fetch = require('node-fetch');
+const _ = require('lodash');
 
 fetch.promise = Promise;
 
@@ -47,6 +48,7 @@ class Messenger extends EventEmitter {
 
     // TODO: Set all config in a single object
     this.config = config
+    this._reformatPersistentMenuItems()
   }
 
   getConfig(){
@@ -162,9 +164,7 @@ class Messenger extends EventEmitter {
     method = method || 'POST';
     return fetch(`https://graph.facebook.com/v2.7/me/${endpoint}?access_token=${this.accessToken}`, {
       method,
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     })
     .then(this._handleFacebookResponse)
@@ -205,9 +205,27 @@ class Messenger extends EventEmitter {
     return fetch(url)
       .then(this._handleFacebookResponse)
       .then(res => res.json())
-      .then((domains) => {
-        console.log('Domains', domains)
-      })
+      .then((json) => json.data[0].whitelisted_domains)
+      .then((oldDomains) => fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          setting_type: 'domain_whitelisting',
+          whitelisted_domains: oldDomains,
+          domain_action_type: 'remove'
+        })
+      }))
+      .then(this._handleFacebookResponse)
+      .then(() => fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          setting_type: 'domain_whitelisting',
+          whitelisted_domains: domains,
+          domain_action_type: 'add'
+        })
+      }))
+      .then(this._handleFacebookResponse)
   }
 
   setGreetingText(text) {
@@ -256,6 +274,39 @@ class Messenger extends EventEmitter {
       setting_type: 'call_to_actions',
       thread_state: 'existing_thread'
     }, 'DELETE');
+  }
+
+  updateSettings() {
+    const updateGetStarted = () => this.displayGetStarted
+      ? this.setGetStartedButton()
+      : this.deleteGetStartedButton()
+
+    const updateGreetingText = () => _.isEmpty(this.greetingMessage)
+      ? this.deleteGreetingText()
+      : this.setGreetingText(this.greetingMessage)
+
+    const updatePersistentMenu = () => this.persistentMenu
+      ? this.setPersistentMenu(this.persistentMenuItems)
+      : this.deletePersistentMenu()
+
+    const updateTrustedDomains = () => this.setWhitelistedDomains(this.trustedDomains)
+
+    let thrown = false
+    const contextifyError = (context) => (err) => {
+      if(thrown) throw err
+      const message = `Error setting ${context}\n${err.message}`
+      thrown = true
+      throw new Error(message)
+    }
+
+    return updateGetStarted()
+    .catch(contextifyError('get started'))
+    .then(updateGreetingText)
+    .catch(contextifyError('greeting text'))
+    .then(updatePersistentMenu)
+    .catch(contextifyError('persistent menu'))
+    .then(updateTrustedDomains)
+    .catch(contextifyError('trusted domains'))
   }
 
   module(factory) {
@@ -424,6 +475,22 @@ class Messenger extends EventEmitter {
       if (signatureHash != expectedHash) {
         throw new Error("Couldn't validate the request signature.");
       }
+    }
+  }
+
+  _reformatPersistentMenuItems() {
+    if(this.persistentMenu && this.persistentMenuItems) {
+      this.persistentMenuItems = this.persistentMenuItems.map((item) => {
+        
+        if(item.value && item.type === 'postback') {
+          item.payload = item.value
+          delete item.value
+        } else if(item.value && item.type === 'web_url') {
+          item.url = item.value
+          delete item.value
+        }
+        return item
+      })
     }
   }
 }
