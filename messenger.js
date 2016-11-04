@@ -419,7 +419,7 @@ class Messenger extends EventEmitter {
   _initWebhook() {
     this.app.get('/webhook', (req, res) => {
       if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === this.config.verifyToken) {
-        
+
         res.status(200).send(req.query['hub.challenge']);
       } else {
         console.error('Failed validation. Make sure the validation tokens match.');
@@ -435,10 +435,13 @@ class Messenger extends EventEmitter {
 
       // Iterate over each entry. There may be multiple if batched.
       data.entry.forEach((entry) => {
+          if(entry && !entry.messaging) {
+            return
+          }
           // Iterate over each messaging event
           entry.messaging.forEach((event) => {
             if (event.message && event.message.is_echo && !this.config.broadcastEchoes) {
-              return;
+              return
             }
             if (event.optin) {
               this._handleEvent('authentication', event);

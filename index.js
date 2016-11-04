@@ -2,6 +2,7 @@ var path = require('path')
 var fs = require('fs')
 const LRU = require('lru-cache')
 const _ = require('lodash')
+const uuid = require('node-uuid')
 
 const Messenger = require('./messenger')
 const actions = require('./actions')
@@ -13,8 +14,8 @@ var loadConfigFromFile = (file) => {
     const config = {
       applicationID: "614024858763519",
       accessToken : "EAAIuc82XAP8BALmmjJ7rD3pbakkzCXpz3Pq311bYAMIYw5nzXW8SoGoNqiZAEqAiHo1HdZA9MrUpgcfc5dp6KsZBi9oq3ZBs4sGorCcod0uZBYsd61HYdfA0SfPv6EZCral46cxNFHmhKI4vb46vAWuEmD3KOuW8ZAimyTXlv1GWAZDZD",
-      verifyToken : "Hello",
       appSecret : "ffb21fa310eabaac543407bae8404869",
+      verifyToken : uuid.v4(),
       validated: false,
       connected: false,
       displayGetStarted : false,
