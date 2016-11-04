@@ -16,6 +16,7 @@ import {
 } from 'react-bootstrap'
 import axios from 'axios'
 import _ from 'lodash'
+import Promise from 'bluebird'
 
 import style from './style.scss'
 
@@ -49,10 +50,10 @@ export default class MessengerModule extends React.Component {
     });
   }
 
-  handleSaveChanges(event) {
+  handleSaveChanges() {
     this.setState({loading:true})
 
-    axios.post("/api/skin-messenger/config", _.omit(this.state, 'loading'))
+    return axios.post("/api/skin-messenger/config", _.omit(this.state, 'loading'))
     .then(res => {
       this.setState({
         message: 'success',
@@ -71,9 +72,9 @@ export default class MessengerModule extends React.Component {
    handleChange(event){
      var { name, value } = event.target
 
-     var connectionInputList = ['applicationID', 'accessToken', 'verifyToken', 'appSecret']
+     var connectionInputList = ['applicationID', 'accessToken', 'hostname', 'ngrok', 'appSecret']
      if(_.includes(connectionInputList, name)){
-       this.setState({ validated:false })
+       this.setState({ validated: false })
      }
 
      this.setState({ message:'warning', [name]: value })
@@ -88,26 +89,31 @@ export default class MessengerModule extends React.Component {
       this.setState({validated: true})
     })
     .catch((res) => {
-      // TODO: Add to errors printing
-      console.log(res)
+      this.setState({ error: res.data.message, loading: false })
     })
   }
 
   handleConnection(event){
+    let preConnection = Promise.resolve()
 
-    axios.post("/api/skin-messenger/connection", {
-      applicationID: this.state.applicationID,
-      accessToken: this.state.accessToken,
-      appSecret: this.state.appSecret,
-      hostname: this.state.hostname
-     })
-    .then((res) => {
-      this.setState({ connected: !this.state.connected })
-      setImmediate(() => this.handleSaveChanges(event))
-    })
-    .catch((res) => {
-      // TODO: Add to errors printing
-      console.log(res)
+    if(this.state.message === 'warning') {
+      preConnection = this.handleSaveChanges()
+    }
+
+    preConnection.then(() => {
+      return axios.post("/api/skin-messenger/connection", {
+        applicationID: this.state.applicationID,
+        accessToken: this.state.accessToken,
+        appSecret: this.state.appSecret,
+        hostname: this.state.hostname
+       })
+      .then((res) => {
+        this.setState({ connected: !this.state.connected })
+        setImmediate(() => this.handleSaveChanges(event))
+      })
+      .catch((res) => {
+        this.setState({ error: res.data.message, loading: false })
+      })
     })
   }
 
@@ -118,7 +124,15 @@ export default class MessengerModule extends React.Component {
   }
 
   handleChangeNGrokCheckBox(event){
+    if (!this.state.ngrok) {
+      axios.get('/api/skin-messenger/ngrok')
+      .then(res => {
+        this.setState({ hostname: res.data.replace(/https:\/\//i, '') })
+      })
+    }
+
     this.setState({
+      validated: false,
       message: 'warning',
       ngrok: !this.state.ngrok
     })
@@ -368,7 +382,8 @@ export default class MessengerModule extends React.Component {
 
     const connectButton = (
        <Button bsStyle="success" active onClick={this.handleConnection}>
-         <Glyphicon glyph="play"/> Connect now!
+         <Glyphicon glyph="play"/>
+         {this.state.message === 'warning' ? ' Save & Connect' : ' Connect'}
        </Button>
      )
 

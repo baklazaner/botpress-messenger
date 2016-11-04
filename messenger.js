@@ -523,7 +523,7 @@ class Messenger extends EventEmitter {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         object: 'page',
-        callback_url: 'https://e879f9f5.ngrok.io/api/skin-messenger/webhook', // TODO Change this
+        callback_url: 'https://' + this.config.hostname + '/api/skin-messenger/webhook',
         verify_token: this.config.verifyToken,
         fields: ['message_deliveries', 'message_reads', 'messages', 'messaging_optins', 'messaging_postbacks']
       })

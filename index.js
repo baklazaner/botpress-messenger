@@ -7,6 +7,7 @@ const uuid = require('node-uuid')
 const Messenger = require('./messenger')
 const actions = require('./actions')
 const outgoing = require('./outgoing')
+const ngrok = require('./ngrok')
 
 var loadConfigFromFile = (file) => {
 
@@ -39,7 +40,7 @@ var saveConfigToFile = (config, file) => {
   fs.writeFileSync(file, JSON.stringify(config))
 }
 
-let messenger = null;
+let messenger = null
 
 module.exports = {
   outgoing: function(event, next) {
@@ -116,12 +117,31 @@ module.exports = {
         messenger.setConfig(req.body)
         saveConfigToFile(messenger.getConfig(), file)
         messenger.updateSettings()
-      .then(() => {
-        res.sendStatus(200)
-      })
-      .catch((err) => {
-        res.status(500).send({ message: err.message })
-      })
+        .then(() => {
+          res.sendStatus(200)
+        })
+        .catch((err) => {
+          res.status(500).send({ message: err.message })
+        })
+    })
+
+    skin.getRouter('skin-messenger')
+    .get('/ngrok', (req, res, next) => {
+      ngrok.getUrl()
+      .then(url => res.send(url))
+    })
+
+    skin.getRouter('skin-messenger')
+    .post('/connection', (req, res, next) => {
+      if(messenger.getConfig().connected) {
+        messenger.disconnect()
+        .then(() => res.sendStatus(200))
+        .catch((err) => res.status(500).send({ message: err.message }))
+      } else {
+        messenger.connect()
+        .then(() => res.sendStatus(200))
+        .catch((err) => res.status(500).send({ message: err.message }))
+      }
     })
 
     skin.getRouter("skin-messenger")
