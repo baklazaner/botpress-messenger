@@ -18,9 +18,9 @@ var loadConfigFromFile = (file) => {
       greetingMessage : "Basic Greeting Message",
       persistentMenu : false,
       persistentMenuItems : [
-                              { type: "postback", title: "Text Postback", value: "postback text" },
-                              { type: "url", title: "Text url", value: "http://www.facebook.com" }
-                            ],
+        { type: "postback", title: "Text Postback", value: "postback text" },
+        { type: "url", title: "Text url", value: "http://www.facebook.com" }
+      ],
       automaticallyMarkAsRead : false,
       trustedDomains : ['http://www.facebook.com', 'http://www.google.com']
     }
@@ -34,6 +34,10 @@ var saveConfigToFile = (config, file) => {
 }
 
 let messenger = null;
+
+const updateMessengerSettings = (settings) => {
+   
+}
 
 module.exports = {
   outgoing: function(event, next) {
