@@ -109,11 +109,10 @@ module.exports = {
     })
 
     skin.getRouter("skin-messenger")
-    .post("/config", (req, res, next) => {
-
-      messenger.setConfig(req.body)
-      saveConfigToFile(messenger.getConfig(), file)
-      messenger.updateSettings()
+      .post("/config", (req, res, next) => {
+        messenger.setConfig(req.body)
+        saveConfigToFile(messenger.getConfig(), file)
+        messenger.updateSettings()
       .then(() => {
         res.sendStatus(200)
       })

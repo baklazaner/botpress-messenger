@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import {
   Form,
   FormGroup,
@@ -28,7 +29,7 @@ export default class MessengerModule extends React.Component {
     this.handleChangeCheckBox = this.handleChangeCheckBox.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleRemoveFromList = this.handleRemoveFromList.bind(this)
-    this.handleAddToList = this.handleAddToList.bind(this)
+    this.handleAddToTrustedDomainsList = this.handleAddToTrustedDomainsList.bind(this)
     this.handleAddToPersistentMenuList = this.handleAddToPersistentMenuList.bind(this)
     this.handleValidation = this.handleValidation.bind(this)
     this.handleConnection = this.handleConnection.bind(this)
@@ -42,32 +43,18 @@ export default class MessengerModule extends React.Component {
         ...res.data
       })
     });
-
   }
 
   handleSubmit(event) {
     this.setState({loading:true})
-     axios.post("/api/skin-messenger/config", {
-       applicationID: this.state.applicationID,
-       accessToken: this.state.accessToken,
-       verifyToken: this.state.verifyToken,
-       appSecret: this.state.appSecret,
-       validated: this.state.validated,
-       connected: this.state.connected,
-       displayGetStarted: this.state.displayGetStarted,
-       greetingMessage: this.state.greetingMessage,
-       persistentMenu: this.state.persistentMenu,
-       persistentMenuItems: this.state.persistentMenuItems,
-       automaticallyMarkAsRead: this.state.automaticallyMarkAsRead,
-       trustedDomains: this.state.trustedDomains
-    })
-     .then((res) => {
-       this.setState({
-         message:'success',
-         loading:false
-       })
-     });
-   }
+    axios.post("/api/skin-messenger/config", _.omit(this.state, 'loading'))
+    .then(res => {
+      this.setState({
+        message: 'success',
+        loading: false
+      })
+    });
+  }
 
    handleChange(event){
      var { name, value } = event.target
@@ -88,14 +75,12 @@ export default class MessengerModule extends React.Component {
      })
     .then((res) => {
       this.setState({validated: true})
-
     })
     .catch((res) => {
       // TODO: Add to errors printing
       console.log(res)
     })
   }
-
 
   handleConnection(event){
     this.setState({ connected: !this.state.connected })
@@ -105,11 +90,7 @@ export default class MessengerModule extends React.Component {
   handleChangeCheckBox(event){
     this.setState({message:'warning'})
     var { name } = event.target
-    if(this.state[name] == true){
-      this.setState({[name]: false})
-    } else {
-      this.setState({[name]: true})
-    }
+    this.setState({[name]: !this.state[name]})
   }
 
   handleRemoveFromList(value, name){
@@ -117,13 +98,14 @@ export default class MessengerModule extends React.Component {
     this.setState({[name]: _.without(this.state[name], value)})
   }
 
-  handleAddToList(name){
+  handleAddToTrustedDomainsList(){
     this.setState({message:'warning'})
-    var txtInput = document.getElementById('newValueToList').value
-    // TODO: Validate url with regex
-    if(txtInput !== ''){
-      this.setState({[name]: _.concat(this.state[name], txtInput)})
-      document.getElementById('newValueToList').value = ''
+    const input = ReactDOM.findDOMNode(this.trustedDomainInput)
+    if(input && input.value !== ''){
+      this.setState({
+        trustedDomains: _.concat(this.state.trustedDomains, input.value)
+      })
+      input.value = ''
     }
   }
 
@@ -187,18 +169,20 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderSimpleList(label, name){
+  renderTrustedDomainList(){
     return (
       <div>
         <FormGroup>
-          {this.renderLabel(label)}
+          {this.renderLabel("Trusted Domains")}
           <Col sm={7}>
             <ControlLabel>Current list of trusted domains:</ControlLabel>
             <ListGroup>
-              {this.state[name].map((value) => {
+              {this.state.trustedDomains.map((value) => {
                 return (
                   <ListGroupItem key={value}>
-                    {value} <Glyphicon className="pull-right" glyph="remove" onClick={() => this.handleRemoveFromList(value, name)} />
+                    {value}
+                    <Glyphicon className="pull-right" glyph="remove"
+                    onClick={() => this.handleRemoveFromList(value, "trustedDomains")} />
                 </ListGroupItem>
                 )
               })}
@@ -208,8 +192,8 @@ export default class MessengerModule extends React.Component {
         <FormGroup>
           <Col smOffset={3} sm={7}>
             <ControlLabel>Add a new domain:</ControlLabel>
-            <FormControl id="newValueToList" type="text"/>
-            <Button bsStyle="primary" active onClick={() => this.handleAddToList(name)}>
+            <FormControl ref={(input) => this.trustedDomainInput = input} type="text"/>
+            <Button bsStyle="primary" active onClick={() => this.handleAddToTrustedDomainsList()}>
               <Glyphicon glyph="plus" /> Add
             </Button>
           </Col>
@@ -338,7 +322,7 @@ export default class MessengerModule extends React.Component {
           {this.renderCheckBox("Automatically mark as read", "automaticallyMarkAsRead")}
         </Panel>
         <Panel header="Advanced">
-          {this.renderSimpleList("Trusted Domains", "trustedDomains")}
+          {this.renderTrustedDomainList()}
         </Panel>
         {this.renderSaveButton()}
       </Form>
