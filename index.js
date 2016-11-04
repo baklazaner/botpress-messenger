@@ -35,10 +35,6 @@ var saveConfigToFile = (config, file) => {
 
 let messenger = null;
 
-const updateMessengerSettings = (settings) => {
-   
-}
-
 module.exports = {
   outgoing: function(event, next) {
     
@@ -114,8 +110,13 @@ module.exports = {
 
       messenger.setConfig(req.body)
       saveConfigToFile(messenger.getConfig(), file)
-
-      res.sendStatus(200)
+      messenger.updateSettings()
+      .then(() => {
+        res.sendStatus(200)
+      })
+      .catch((err) => {
+        res.status(500).send({ message: err.message })
+      })
     })
   }
 }
