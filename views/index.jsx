@@ -11,7 +11,8 @@ import {
   Checkbox,
   Glyphicon,
   ListGroup,
-  ListGroupItem
+  ListGroupItem,
+  InputGroup
 } from 'react-bootstrap'
 import axios from 'axios'
 import _ from 'lodash'
@@ -35,6 +36,7 @@ export default class MessengerModule extends React.Component {
     this.handleConnection = this.handleConnection.bind(this)
     this.renderPersistentMenuItem = this.renderPersistentMenuItem.bind(this)
     this.renderDomainElement = this.renderDomainElement.bind(this)
+    this.handleChangeNGrokCheckBox = this.handleChangeNGrokCheckBox.bind(this)
   }
 
   componentDidMount(){
@@ -93,14 +95,36 @@ export default class MessengerModule extends React.Component {
   }
 
   handleConnection(event){
-    this.setState({ connected: !this.state.connected })
-    setImmediate(() => this.handleSaveChanges(event))
+
+    axios.post("/api/skin-messenger/connection", {
+      applicationID: this.state.applicationID,
+      accessToken: this.state.accessToken,
+      appSecret: this.state.appSecret,
+      hostname: this.state.hostname
+     })
+    .then((res) => {
+      this.setState({ connected: !this.state.connected })
+      setImmediate(() => this.handleSaveChanges(event))
+    })
+    .catch((res) => {
+      // TODO: Add to errors printing
+      console.log(res)
+    })
   }
 
   handleChangeCheckBox(event){
     this.setState({message:'warning'})
     var { name } = event.target
     this.setState({[name]: !this.state[name]})
+  }
+
+  handleChangeNGrokCheckBox(event){
+    setImmediate(() => {
+      this.setState({
+        message: 'warning',
+        ngrok: !this.state.ngrok
+      })
+    })
   }
 
   handleRemoveFromList(value, name){
@@ -164,6 +188,48 @@ export default class MessengerModule extends React.Component {
     )
   }
 
+  renderHostnameTextInput(props){
+    const prefix = 'https://'
+    const suffix = '/api/skin-messenger/webhook'
+
+    const getValidationState = () => {
+      if(this.state.hostname){
+        var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi
+        var regex = new RegExp(expression)
+
+        var completeURL = prefix + this.state.hostname + suffix
+        return regex.test(completeURL) ? 'success' : 'error'
+      }
+    }
+
+    return (
+      <FormGroup validationState={getValidationState()}>
+        {this.renderLabel('Hostname')}
+        <Col sm={7}>
+          <InputGroup>
+            <InputGroup.Addon>{prefix}</InputGroup.Addon>
+            <FormControl name="hostname" {...props} type="text"
+              value={this.state.hostname} onChange={this.handleChange.bind(this)} />
+            <InputGroup.Addon>{suffix}</InputGroup.Addon>
+          </InputGroup>
+        </Col>
+      </FormGroup>
+
+    )
+  }
+
+  renderNGrokCheckbox(props){
+    return (
+      <FormGroup>
+        {this.renderLabel('Use ngrok')}
+        <Col sm={7}>
+          <Checkbox name='ngrok' {...props} checked={this.state.ngrok}
+            onChange={this.handleChangeNGrokCheckBox} />
+        </Col>
+      </FormGroup>
+    )
+  }
+
   renderTextAreaInput(label, name, props = {}){
     return (
       <FormGroup>
@@ -183,7 +249,7 @@ export default class MessengerModule extends React.Component {
       <FormGroup>
         {this.renderLabel(label)}
         <Col sm={7}>
-          <Checkbox name={name} checked={this.state[name]} 
+          <Checkbox name={name} checked={this.state[name]}
             onChange={this.handleChangeCheckBox} />
         </Col>
       </FormGroup>
@@ -209,7 +275,7 @@ export default class MessengerModule extends React.Component {
           <Col sm={7}>
             <ControlLabel>Current trusted domains:</ControlLabel>
             <ListGroup>
-              {trustedDomainElements}          
+              {trustedDomainElements}
             </ListGroup>
           </Col>
         </FormGroup>
@@ -230,9 +296,9 @@ export default class MessengerModule extends React.Component {
     const handleRemove = () => this.handleRemoveFromList(item, 'persistentMenuItems')
     return <ListGroupItem key={item.title}>
         {item.type + " | " + item.title + " | " + item.value}
-        <Glyphicon 
-          className="pull-right" 
-          glyph="remove" 
+        <Glyphicon
+          className="pull-right"
+          glyph="remove"
           onClick={handleRemove} />
       </ListGroupItem>
   }
@@ -326,8 +392,9 @@ export default class MessengerModule extends React.Component {
         <Panel header="Connexion">
           {this.renderTextInput("Application ID", "applicationID", { disabled: this.state.connected })}
           {this.renderTextAreaInput("Access Token", "accessToken", { disabled: this.state.connected })}
-          {this.renderTextInput("Verify Token", "verifyToken", { disabled: this.state.connected })}
           {this.renderTextInput("App Secret", "appSecret", { disabled: this.state.connected })}
+          {this.renderHostnameTextInput({ disabled: (this.state.ngrok || this.state.connected) })}
+          {this.renderNGrokCheckbox( {disabled: this.state.connected} )}
           {this.renderConnectionValidation()}
           {this.state.validated && this.renderConnectionButton()}
         </Panel>
@@ -363,7 +430,7 @@ export default class MessengerModule extends React.Component {
       style = 'danger'
       hander += ' | Error updating settings'
     }
-    
+
     return <Panel header={header} bsStyle={style}>
       {this.renderForm()}
     </Panel>
