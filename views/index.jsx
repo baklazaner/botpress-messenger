@@ -47,13 +47,21 @@ export default class MessengerModule extends React.Component {
 
   handleSubmit(event) {
     this.setState({loading:true})
+
     axios.post("/api/skin-messenger/config", _.omit(this.state, 'loading'))
     .then(res => {
       this.setState({
         message: 'success',
-        loading: false
+        loading: false,
+        error: null
       })
-    });
+    })
+    .catch((err) => {
+     this.setState({
+       loading: false,
+       error: err.response.data.message
+     })
+    })
   }
 
    handleChange(event){
@@ -251,6 +259,12 @@ export default class MessengerModule extends React.Component {
     )
   }
 
+  renderErrorMessage() {
+    return <p className={style.errorMessage}>
+      {this.state.error}
+    </p>
+  }
+
   renderInnerValidation(name){
     if(this.state[name]){
       return (
@@ -306,6 +320,7 @@ export default class MessengerModule extends React.Component {
   renderForm(){
     return (
       <Form horizontal>
+        {this.state.error && this.renderErrorMessage()}
         <Panel header="Connexion">
           {this.renderTextInput("Application ID", "applicationID", {disabled: this.state.connected})}
           {this.renderTextAreaInput("Access Token", "accessToken", {disabled: this.state.connected})}
@@ -339,6 +354,12 @@ export default class MessengerModule extends React.Component {
     } else if (this.state.message && this.state.message === 'warning') {
       return (
         <Panel header="Messenger settings - Be carreful, some changes are not saved..." bsStyle="warning">
+          {this.renderForm()}
+        </Panel>
+      )
+    } else if (this.state.error) {
+      return (
+        <Panel header="Messenger settings - Error updating settings" bsStyle="danger">
           {this.renderForm()}
         </Panel>
       )

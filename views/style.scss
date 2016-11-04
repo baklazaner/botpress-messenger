@@ -1,3 +1,11 @@
 .hello {
   color: red;
 }
+
+.errorMessage {
+  white-space: pre-wrap;
+  color: #D00B00;
+  font-weight: bold;
+  border: 1px dashed #D00B00;
+  padding: 10px;
+}
