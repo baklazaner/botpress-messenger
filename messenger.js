@@ -27,16 +27,25 @@ class Messenger extends EventEmitter {
     this._initWebhook();
   }
 
-  setConfig(config){
+  setConfig(config) {
     if (!config.accessToken || !config.verifyToken || !config.appSecret){
       throw new Error('You need to specify an accessToken, verifyToken and appSecret');
     }
-    
+
     this.config = config
   }
 
   getConfig(){
     return this.config
+  }
+
+  connect() {
+    return this._setupNewWebhook()
+    .then(() => this._subscribePage())
+  }
+
+  disconnect() {
+    return this._unsubscribePage()
   }
 
   sendTextMessage(recipientId, text, quickReplies, options) {
@@ -410,7 +419,7 @@ class Messenger extends EventEmitter {
   _initWebhook() {
     this.app.get('/webhook', (req, res) => {
       if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === this.config.verifyToken) {
-        console.log('Validation Succeded.')
+        
         res.status(200).send(req.query['hub.challenge']);
       } else {
         console.error('Failed validation. Make sure the validation tokens match.');
@@ -493,6 +502,51 @@ class Messenger extends EventEmitter {
       })
     }
   }
+
+  _setupNewWebhook() {
+    const oAuthUrl = 'https://graph.facebook.com/v2.7/oauth/access_token' + 
+      '?client_id=' + this.config.applicationID + 
+      '&client_secret=' + this.config.appSecret +
+      '&grant_type=client_credentials'
+
+    const url = `https://graph.facebook.com/v2.7/${this.config.applicationID}/subscriptions?access_token=`
+    
+    return fetch(oAuthUrl)
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
+    .then(json => json.access_token)
+    .then(token => fetch(url + token, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        object: 'page',
+        callback_url: 'https://e879f9f5.ngrok.io/api/skin-messenger/webhook', // TODO Change this
+        verify_token: this.config.verifyToken,
+        fields: ['message_deliveries', 'message_reads', 'messages', 'messaging_optins', 'messaging_postbacks']
+      })
+    }))
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
+  }
+
+  _subscribePage() {
+    const url = 'https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=' + this.config.accessToken
+
+    return fetch(url, { method: 'POST' })
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
+    .catch(err => console.log(err))
+  }
+
+  _unsubscribePage() {
+    const url = 'https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=' + this.config.accessToken
+
+    return fetch(url, { method: 'DELETE' })
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
+    .catch(err => console.log(err))
+  }
+
 }
 
 module.exports = Messenger;
