@@ -31,22 +31,7 @@ class Messenger extends EventEmitter {
     if (!config.accessToken || !config.verifyToken || !config.appSecret){
       throw new Error('You need to specify an accessToken, verifyToken and appSecret');
     }
-
-    this.applicationID = config.applicationID;
-    this.accessToken = config.accessToken;
-    this.verifyToken = config.verifyToken;
-    this.appSecret = config.appSecret;
-    this.validated = config.validated;
-    this.connected = config.connected;
-    this.broadcastEchoes = config.broadcastEchoes || false;
-    this.displayGetStarted = config.displayGetStarted;
-    this.greetingMessage = config.greetingMessage;
-    this.persistentMenu = config.persistentMenu;
-    this.automaticallyMarkAsRead = config.automaticallyMarkAsRead;
-    this.trustedDomains = config.trustedDomains;
-    this.persistentMenuItems = config.persistentMenuItems;
-
-    // TODO: Set all config in a single object
+    
     this.config = config
   }
 
@@ -161,7 +146,7 @@ class Messenger extends EventEmitter {
   sendRequest(body, endpoint, method) {
     endpoint = endpoint || 'messages';
     method = method || 'POST';
-    return fetch(`https://graph.facebook.com/v2.7/me/${endpoint}?access_token=${this.accessToken}`, {
+    return fetch(`https://graph.facebook.com/v2.7/me/${endpoint}?access_token=${this.config.accessToken}`, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -192,7 +177,7 @@ class Messenger extends EventEmitter {
   }
 
   getUserProfile(userId) {
-    const url = `https://graph.facebook.com/v2.7/${userId}?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=${this.accessToken}`;
+    const url = `https://graph.facebook.com/v2.7/${userId}?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=${this.config.accessToken}`;
     return fetch(url)
       .then(this._handleFacebookResponse)
       .then(res => res.json())
@@ -200,7 +185,7 @@ class Messenger extends EventEmitter {
   }
 
   setWhitelistedDomains(domains) {
-    const url = `https://graph.facebook.com/v2.7/me/thread_settings?fields=whitelisted_domains&access_token=${this.accessToken}`;
+    const url = `https://graph.facebook.com/v2.7/me/thread_settings?fields=whitelisted_domains&access_token=${this.config.accessToken}`;
     return fetch(url)
       .then(this._handleFacebookResponse)
       .then(res => res.json())
@@ -288,20 +273,20 @@ class Messenger extends EventEmitter {
   }
 
   updateSettings() {
-    const updateGetStarted = () => this.displayGetStarted
+    const updateGetStarted = () => this.config.displayGetStarted
       ? this.setGetStartedButton()
       : this.deleteGetStartedButton()
 
-    const updateGreetingText = () => _.isEmpty(this.greetingMessage)
+    const updateGreetingText = () => _.isEmpty(this.config.greetingMessage)
       ? this.deleteGreetingText()
-      : this.setGreetingText(this.greetingMessage)
+      : this.setGreetingText(this.config.greetingMessage)
 
-    const items = this._reformatPersistentMenuItems(this.persistentMenuItems)
-    const updatePersistentMenu = () => this.persistentMenu
+    const items = this._reformatPersistentMenuItems(this.config.persistentMenuItems)
+    const updatePersistentMenu = () => this.config.persistentMenu
       ? this.setPersistentMenu(items)
       : this.deletePersistentMenu()
 
-    const updateTrustedDomains = () => this.setWhitelistedDomains(this.trustedDomains)
+    const updateTrustedDomains = () => this.setWhitelistedDomains(this.config.trustedDomains)
 
     let thrown = false
     const contextifyError = (context) => (err) => {
@@ -424,7 +409,7 @@ class Messenger extends EventEmitter {
 
   _initWebhook() {
     this.app.get('/webhook', (req, res) => {
-      if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === this.verifyToken) {
+      if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === this.config.verifyToken) {
         console.log('Validation Succeded.')
         res.status(200).send(req.query['hub.challenge']);
       } else {
@@ -443,7 +428,7 @@ class Messenger extends EventEmitter {
       data.entry.forEach((entry) => {
           // Iterate over each messaging event
           entry.messaging.forEach((event) => {
-            if (event.message && event.message.is_echo && !this.broadcastEchoes) {
+            if (event.message && event.message.is_echo && !this.config.broadcastEchoes) {
               return;
             }
             if (event.optin) {
@@ -482,7 +467,7 @@ class Messenger extends EventEmitter {
       var elements = signature.split('=');
       var method = elements[0];
       var signatureHash = elements[1];
-      var expectedHash = crypto.createHmac('sha1', this.appSecret)
+      var expectedHash = crypto.createHmac('sha1', this.config.appSecret)
                           .update(buf)
                           .digest('hex');
 
@@ -493,8 +478,8 @@ class Messenger extends EventEmitter {
   }
 
   _reformatPersistentMenuItems() {
-    if(this.persistentMenu && this.persistentMenuItems) {
-      return this.persistentMenuItems.map((item) => {
+    if(this.config.persistentMenu && this.config.persistentMenuItems) {
+      return this.config.persistentMenuItems.map((item) => {
         
         if(item.value && item.type === 'postback') {
           item.payload = item.value
