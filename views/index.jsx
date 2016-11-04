@@ -30,6 +30,8 @@ export default class MessengerModule extends React.Component {
     this.handleRemoveFromList = this.handleRemoveFromList.bind(this)
     this.handleAddToList = this.handleAddToList.bind(this)
     this.handleAddToPersistentMenuList = this.handleAddToPersistentMenuList.bind(this)
+    this.handleValidation = this.handleValidation.bind(this)
+    this.handleConnection = this.handleConnection.bind(this)
   }
 
   componentDidMount(){
@@ -46,9 +48,12 @@ export default class MessengerModule extends React.Component {
   handleSubmit(event) {
     this.setState({loading:true})
      axios.post("/api/skin-messenger/config", {
+       applicationID: this.state.applicationID,
        accessToken: this.state.accessToken,
        verifyToken: this.state.verifyToken,
        appSecret: this.state.appSecret,
+       validated: this.state.validated,
+       connected: this.state.connected,
        displayGetStarted: this.state.displayGetStarted,
        greetingMessage: this.state.greetingMessage,
        persistentMenu: this.state.persistentMenu,
@@ -59,16 +64,42 @@ export default class MessengerModule extends React.Component {
      .then((res) => {
        this.setState({
          message:'success',
-         loading:false,
-         ...res.data
+         loading:false
        })
      });
    }
 
-  handleChange(event){
-    this.setState({message:'warning'})
-    var { name, value } = event.target
-    this.setState({[name]: value})
+   handleChange(event){
+     var { name, value } = event.target
+
+     var connectionInputList = ['applicationID', 'accessToken', 'verifyToken', 'appSecret']
+     if(_.includes(connectionInputList, name)){
+       this.setState({validated:false})
+     }
+
+     this.setState({message:'warning'})
+     this.setState({[name]: value})
+   }
+
+  handleValidation(event){
+    axios.post("/api/skin-messenger/validation", {
+      applicationID: this.state.applicationID,
+      accessToken: this.state.accessToken
+     })
+    .then((res) => {
+      this.setState({validated: true})
+
+    })
+    .catch((res) => {
+      // TODO: Add to errors printing
+      console.log(res)
+    })
+  }
+
+
+  handleConnection(event){
+    this.setState({ connected: !this.state.connected })
+    setImmediate(() => this.handleSubmit(event))
   }
 
   handleChangeCheckBox(event){
@@ -98,7 +129,7 @@ export default class MessengerModule extends React.Component {
 
   handleAddToPersistentMenuList(name){
     this.setState({message:'warning'})
-    console.log(name)
+
     var item = {
       type: document.getElementById('newPersistantMenuType').value,
       title: document.getElementById('newPersistantMenuTitle').value,
@@ -121,24 +152,24 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderTextInput(label, name){
+  renderTextInput(label, name, props = {}){
     return (
       <FormGroup>
         {this.renderLabel(label)}
         <Col sm={7}>
-          <FormControl name={name} type="text" placeholder={name}
+          <FormControl id={name} name={name} {...props} type="text"
             value={this.state[name]} onChange={this.handleChange.bind(this)} />
         </Col>
       </FormGroup>
     )
   }
 
-  renderTextAreaInput(label, name){
+  renderTextAreaInput(label, name, props = {}){
     return (
       <FormGroup>
         {this.renderLabel(label)}
         <Col sm={7}>
-          <FormControl name={name} componentClass="textarea" rows="3"
+          <FormControl id={name} name={name} {...props} componentClass="textarea" rows="3"
             value={this.state[name]} onChange={this.handleChange.bind(this)}/>
         </Col>
       </FormGroup>
@@ -236,13 +267,68 @@ export default class MessengerModule extends React.Component {
     )
   }
 
+  renderInnerValidation(name){
+    if(this.state[name]){
+      return (
+          <ControlLabel>All your connection settings are valid.</ControlLabel>
+      )
+    } else {
+      return (
+        <Button bsStyle="primary" active onClick={this.handleValidation}>
+          Validate now!
+        </Button>
+      )
+    }
+  }
+
+  renderValidationButton(label, name){
+    return (
+      <FormGroup>
+        {this.renderLabel(label)}
+        <Col sm={7}>
+          {this.renderInnerValidation(name)}
+        </Col>
+      </FormGroup>
+    )
+  }
+
+  renderInnerConnection(name){
+    if(this.state[name]){
+      return (
+        <Button bsStyle="danger" active onClick={this.handleConnection}>
+          <Glyphicon glyph="stop"/> Disconnect
+        </Button>
+      )
+    } else {
+       return (
+         <Button bsStyle="success" active onClick={this.handleConnection}>
+           <Glyphicon glyph="play"/> Connect now!
+         </Button>
+       )
+    }
+
+  }
+
+  renderConnectionButton(name){
+    return (
+      <FormGroup>
+        <Col smOffset={3} sm={7}>
+          {this.renderInnerConnection(name)}
+        </Col>
+      </FormGroup>
+    )
+  }
+
   renderForm(){
     return (
       <Form horizontal>
         <Panel header="Connexion">
-          {this.renderTextAreaInput("Access Token", "accessToken")}
-          {this.renderTextInput("Verify Token", "verifyToken")}
-          {this.renderTextInput("App Secret", "appSecret")}
+          {this.renderTextInput("Application ID", "applicationID", {disabled: this.state.connected})}
+          {this.renderTextAreaInput("Access Token", "accessToken", {disabled: this.state.connected})}
+          {this.renderTextInput("Verify Token", "verifyToken", {disabled: this.state.connected})}
+          {this.renderTextInput("App Secret", "appSecret", {disabled: this.state.connected})}
+          {this.renderValidationButton("Validation", "validated")}
+          {this.state.validated && this.renderConnectionButton("connected")}
         </Panel>
         <Panel header="General">
           {this.renderCheckBox("Display Get Started", "displayGetStarted")}
@@ -268,7 +354,7 @@ export default class MessengerModule extends React.Component {
       )
     } else if (this.state.message && this.state.message === 'warning') {
       return (
-        <Panel header="Messenger settings- Be carreful, some changes are not saved..." bsStyle="warning">
+        <Panel header="Messenger settings - Be carreful, some changes are not saved..." bsStyle="warning">
           {this.renderForm()}
         </Panel>
       )
