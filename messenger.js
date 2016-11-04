@@ -31,10 +31,13 @@ class Messenger extends EventEmitter {
     if (!config.accessToken || !config.verifyToken || !config.appSecret){
       throw new Error('You need to specify an accessToken, verifyToken and appSecret');
     }
-    
+
+    this.applicationID = config.applicationID;
     this.accessToken = config.accessToken;
     this.verifyToken = config.verifyToken;
     this.appSecret = config.appSecret;
+    this.validated = config.validated;
+    this.connected = config.connected;
     this.broadcastEchoes = config.broadcastEchoes || false;
     this.displayGetStarted = config.displayGetStarted;
     this.greetingMessage = config.greetingMessage;
@@ -139,6 +142,22 @@ class Messenger extends EventEmitter {
     return req();
   }
 
+  sendValidationRequest(applicationID, accessToken) {
+    return fetch(`https://graph.facebook.com/v2.7/${applicationID}/subscriptions_sample`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        object_id: applicationID,
+        object: 'page',
+        field: 'messages',
+        custom_fields: { page_id: applicationID },
+        access_token: accessToken
+      })
+    })
+    .then(this._handleFacebookResponse)
+    .then(res => res.json())
+  }
+
   sendRequest(body, endpoint, method) {
     endpoint = endpoint || 'messages';
     method = method || 'POST';
@@ -230,7 +249,7 @@ class Messenger extends EventEmitter {
   deleteGreetingText() {
    return this.sendThreadRequest({
       setting_type: 'greeting'
-    }, 'DELETE'); 
+    }, 'DELETE');
   }
 
   setGetStartedButton(action) {
@@ -389,7 +408,7 @@ class Messenger extends EventEmitter {
     if(res.status < 400) {
       return res
     }
-    
+
     let errorMessage = "An error has been returned by Facebook API."
     errorMessage += '\nStatus: ' + res.status + ' (' + res.statusText + ')'
 

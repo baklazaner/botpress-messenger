@@ -11,9 +11,12 @@ var loadConfigFromFile = (file) => {
 
   if(!fs.existsSync(file)){
     const config = {
+      applicationID: "614024858763519",
       accessToken : "EAAIuc82XAP8BALmmjJ7rD3pbakkzCXpz3Pq311bYAMIYw5nzXW8SoGoNqiZAEqAiHo1HdZA9MrUpgcfc5dp6KsZBi9oq3ZBs4sGorCcod0uZBYsd61HYdfA0SfPv6EZCral46cxNFHmhKI4vb46vAWuEmD3KOuW8ZAimyTXlv1GWAZDZD",
       verifyToken : "Hello",
       appSecret : "ffb21fa310eabaac543407bae8404869",
+      validated: false,
+      connected: false,
       displayGetStarted : false,
       greetingMessage : "Basic Greeting Message",
       persistentMenu : false,
@@ -37,7 +40,7 @@ let messenger = null;
 
 module.exports = {
   outgoing: function(event, next) {
-    
+
     if(event.platform !== 'facebook') {
       return next()
     }
@@ -45,7 +48,7 @@ module.exports = {
     if(!messenger) {
       return next('Module is not initialized yet.')
     }
-    
+
     if(!outgoing[event.type]) {
       return next('Unsupported event type: ' + event.type)
     }
@@ -65,9 +68,9 @@ module.exports = {
   ready: function(skin) {
     const file = path.join(skin.projectLocation, skin.botfile.modulesConfigDir, 'skin-messenger.json')
     const config = loadConfigFromFile(file)
-    
+
     messenger = new Messenger(skin, config);
-    
+
     const users = require('./users')(skin, messenger);
 
     const messagesCache = LRU({
@@ -116,6 +119,17 @@ module.exports = {
       })
       .catch((err) => {
         res.status(500).send({ message: err.message })
+      })
+    })
+
+    skin.getRouter("skin-messenger")
+    .post("/validation", (req, res, next) => {
+      messenger.sendValidationRequest(req.body.applicationID, req.body.accessToken)
+      .then((json) => {
+        res.send(json)
+      })
+      .catch((err) => {
+        res.status(500).send({message:err.message})
       })
     })
   }
