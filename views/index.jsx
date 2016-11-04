@@ -73,11 +73,10 @@ export default class MessengerModule extends React.Component {
 
      var connectionInputList = ['applicationID', 'accessToken', 'verifyToken', 'appSecret']
      if(_.includes(connectionInputList, name)){
-       this.setState({validated:false})
+       this.setState({ validated:false })
      }
 
-     this.setState({message:'warning'})
-     this.setState({[name]: value})
+     this.setState({ message:'warning', [name]: value })
    }
 
   handleValidation(event){
@@ -119,12 +118,10 @@ export default class MessengerModule extends React.Component {
   }
 
   handleChangeNGrokCheckBox(event){
-    setImmediate(() => {
-      this.setState({
-        message: 'warning',
-        ngrok: !this.state.ngrok
-      })
-    })
+    this.setState({
+      message: 'warning',
+      ngrok: !this.state.ngrok
+    })  
   }
 
   handleRemoveFromList(value, name){
@@ -182,7 +179,7 @@ export default class MessengerModule extends React.Component {
         {this.renderLabel(label)}
         <Col sm={7}>
           <FormControl name={name} {...props} type="text"
-            value={this.state[name]} onChange={this.handleChange.bind(this)} />
+            value={this.state[name]} onChange={this.handleChange} />
         </Col>
       </FormGroup>
     )
@@ -209,7 +206,7 @@ export default class MessengerModule extends React.Component {
           <InputGroup>
             <InputGroup.Addon>{prefix}</InputGroup.Addon>
             <FormControl name="hostname" {...props} type="text"
-              value={this.state.hostname} onChange={this.handleChange.bind(this)} />
+              value={this.state.hostname} onChange={this.handleChange} />
             <InputGroup.Addon>{suffix}</InputGroup.Addon>
           </InputGroup>
         </Col>
@@ -238,7 +235,7 @@ export default class MessengerModule extends React.Component {
           <FormControl name={name} {...props}
             componentClass="textarea" rows="3"
             value={this.state[name]}
-            onChange={this.handleChange.bind(this)} />
+            onChange={this.handleChange} />
         </Col>
       </FormGroup>
     )

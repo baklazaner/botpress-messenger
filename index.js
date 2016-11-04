@@ -18,6 +18,8 @@ var loadConfigFromFile = (file) => {
       verifyToken : uuid.v4(),
       validated: false,
       connected: false,
+      hostname: '',
+      ngrok: false,
       displayGetStarted : false,
       greetingMessage : "Basic Greeting Message",
       persistentMenu : false,
