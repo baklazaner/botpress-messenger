@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Official Facebook Messenger module for botskin",
   "main": "index.js",
+  "homepage": "https://github.com/slvnperron/skin-messenger",
   "botskin": {
-    "menuText": "skin-skin-messenger"
+    "menuText": "skin-messenger"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
