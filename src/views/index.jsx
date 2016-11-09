@@ -14,7 +14,6 @@ import {
   ListGroupItem,
   InputGroup
 } from 'react-bootstrap'
-import axios from 'axios'
 import _ from 'lodash'
 import Promise from 'bluebird'
 
@@ -40,8 +39,12 @@ export default class MessengerModule extends React.Component {
     this.handleChangeNGrokCheckBox = this.handleChangeNGrokCheckBox.bind(this)
   }
 
+  getAxios() {
+    return this.props.skin.axios
+  }
+
   componentDidMount(){
-    axios.get("/api/skin-messenger/config")
+    this.getAxios().get("/api/skin-messenger/config")
     .then((res) => {
       this.setState({
         loading:false,
@@ -53,7 +56,7 @@ export default class MessengerModule extends React.Component {
   handleSaveChanges() {
     this.setState({loading:true})
 
-    return axios.post("/api/skin-messenger/config", _.omit(this.state, 'loading'))
+    return this.getAxios().post("/api/skin-messenger/config", _.omit(this.state, 'loading'))
     .then(res => {
       this.setState({
         message: 'success',
@@ -81,7 +84,7 @@ export default class MessengerModule extends React.Component {
    }
 
   handleValidation(event){
-    axios.post("/api/skin-messenger/validation", {
+    this.getAxios().post("/api/skin-messenger/validation", {
       applicationID: this.state.applicationID,
       accessToken: this.state.accessToken
      })
@@ -101,7 +104,7 @@ export default class MessengerModule extends React.Component {
     }
 
     preConnection.then(() => {
-      return axios.post("/api/skin-messenger/connection", {
+      return this.getAxios().post("/api/skin-messenger/connection", {
         applicationID: this.state.applicationID,
         accessToken: this.state.accessToken,
         appSecret: this.state.appSecret,
@@ -125,7 +128,7 @@ export default class MessengerModule extends React.Component {
 
   handleChangeNGrokCheckBox(event){
     if (!this.state.ngrok) {
-      axios.get('/api/skin-messenger/ngrok')
+      this.getAxios().get('/api/skin-messenger/ngrok')
       .then(res => {
         this.setState({ hostname: res.data.replace(/https:\/\//i, '') })
       })
