@@ -5,6 +5,7 @@
   "main": "bin/node.bundle.js",
   "botskin": {
     "menuText": "Messenger",
+    "menuIcon": "message",
     "webBundle": "bin/web.bundle.js"
   },
   "scripts": {
