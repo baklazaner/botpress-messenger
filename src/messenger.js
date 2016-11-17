@@ -1,10 +1,9 @@
-'use strict';
-
 const Promise = require('bluebird');
 const EventEmitter = require('eventemitter2');
 const crypto = require('crypto');
 const fetch = require('node-fetch');
 const _ = require('lodash');
+const bodyParser = require('body-parser')
 
 fetch.promise = Promise;
 
@@ -21,9 +20,14 @@ class Messenger extends EventEmitter {
 
     this.setConfig(config)
 
-    this.app = bp.getRouter('botpress-messenger');
-    // TODO Verify request is coming from facebook
+    this.app = bp.getRouter('botpress-messenger', {
+      'bodyParser.json': false
+    })
 
+    this.app.use(bodyParser.json({
+      verify: this._verifyRequestSignature.bind(this)
+    }))
+    
     this._initWebhook();
   }
 
@@ -472,19 +476,15 @@ class Messenger extends EventEmitter {
   }
 
   _verifyRequestSignature(req, res, buf) {
-    var signature = req.headers['x-hub-signature'];
+    var signature = req.headers['x-hub-signature']
     if (!signature) {
-      throw new Error('Couldn\'t validate the request signature.');
+      throw new Error('Couldn\'t validate the request signature.')
     } else {
-      var elements = signature.split('=');
-      var method = elements[0];
-      var signatureHash = elements[1];
-      var expectedHash = crypto.createHmac('sha1', this.config.appSecret)
-                          .update(buf)
-                          .digest('hex');
+      let [method, hash] = signature.split('=')
+      var expectedHash = crypto.createHmac('sha1', this.config.appSecret).update(buf).digest('hex')
 
-      if (signatureHash != expectedHash) {
-        throw new Error("Couldn't validate the request signature.");
+      if (hash != expectedHash) {
+        throw new Error("Couldn't validate the request signature.")
       }
     }
   }
