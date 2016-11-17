@@ -112,7 +112,7 @@ module.exports = {
       res.send(messenger.getConfig())
     })
 
-    bp.getRouter("bp-messenger")
+    bp.getRouter("botpress-messenger")
       .post("/config", (req, res, next) => {
         messenger.setConfig(req.body)
         saveConfigToFile(messenger.getConfig(), file)
@@ -129,12 +129,6 @@ module.exports = {
     .get('/ngrok', (req, res, next) => {
       ngrok.getUrl()
       .then(url => res.send(url))
-    })
-
-    bp.getRouter('botpress-messenger')
-    .get('/homepage', (req, res, next) => {
-      const pkg = require(path.join(__dirname, "package.json"))
-      res.send(pkg.homepage)
     })
 
     bp.getRouter('botpress-messenger')

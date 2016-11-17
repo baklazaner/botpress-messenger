@@ -50,14 +50,7 @@ export default class MessengerModule extends React.Component {
         loading: false,
         ...res.data
       })
-    });
-
-    axios.get("/api/botpress-messenger/homepage")
-    .then((res) => {
-      this.setState({
-        homepage: res.data
-      })
-    });
+    })
   }
 
   handleSaveChanges() {
