@@ -13,23 +13,20 @@ var loadConfigFromFile = (file) => {
 
   if(!fs.existsSync(file)){
     const config = {
-      applicationID: "614024858763519",
-      accessToken : "EAAIuc82XAP8BALmmjJ7rD3pbakkzCXpz3Pq311bYAMIYw5nzXW8SoGoNqiZAEqAiHo1HdZA9MrUpgcfc5dp6KsZBi9oq3ZBs4sGorCcod0uZBYsd61HYdfA0SfPv6EZCral46cxNFHmhKI4vb46vAWuEmD3KOuW8ZAimyTXlv1GWAZDZD",
-      appSecret : "ffb21fa310eabaac543407bae8404869",
+      applicationID: "",
+      accessToken : "",
+      appSecret : "",
       verifyToken : uuid.v4(),
       validated: false,
       connected: false,
       hostname: '',
       ngrok: false,
       displayGetStarted : false,
-      greetingMessage : "Basic Greeting Message",
+      greetingMessage : "Default greeting message",
       persistentMenu : false,
-      persistentMenuItems : [
-        { type: "postback", title: "Text Postback", value: "postback text" },
-        { type: "url", title: "Text url", value: "http://www.facebook.com" }
-      ],
+      persistentMenuItems : [],
       automaticallyMarkAsRead : false,
-      trustedDomains : ['http://www.facebook.com', 'http://www.google.com']
+      trustedDomains : []
     }
     saveConfigToFile(config,file)
   }
