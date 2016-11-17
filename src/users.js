@@ -41,7 +41,15 @@ module.exports = function(bp, messenger) {
           saveUserProfiles(userProfiles)
           cacheTs = new Date()
         }
-        return profile
+
+        return bp.db.saveUser({
+          id: profile.id,
+          platform: 'messenger',
+          gender: profile.gender,
+          timezone: profile.timezone,
+          locale: profile.locale,
+        }).return(profile)
+
       })
     })
   }
