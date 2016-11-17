@@ -13,15 +13,15 @@ const normalizeString = function(str) {
 }
 
 class Messenger extends EventEmitter {
-  constructor(skin, config) {
+  constructor(bp, config) {
     super();
-    if (!skin || !config){
-      throw new Error('You need to specify skin and config');
+    if (!bp || !config){
+      throw new Error('You need to specify botpress and config');
     }
 
     this.setConfig(config)
 
-    this.app = skin.getRouter('skin-messenger');
+    this.app = bp.getRouter('botpress-messenger');
     // TODO Verify request is coming from facebook
 
     this._initWebhook();
@@ -492,7 +492,7 @@ class Messenger extends EventEmitter {
   _reformatPersistentMenuItems() {
     if(this.config.persistentMenu && this.config.persistentMenuItems) {
       return this.config.persistentMenuItems.map((item) => {
-        
+
         if(item.value && item.type === 'postback') {
           item.payload = item.value
           delete item.value
@@ -507,13 +507,13 @@ class Messenger extends EventEmitter {
   }
 
   _setupNewWebhook() {
-    const oAuthUrl = 'https://graph.facebook.com/v2.7/oauth/access_token' + 
-      '?client_id=' + this.config.applicationID + 
+    const oAuthUrl = 'https://graph.facebook.com/v2.7/oauth/access_token' +
+      '?client_id=' + this.config.applicationID +
       '&client_secret=' + this.config.appSecret +
       '&grant_type=client_credentials'
 
     const url = `https://graph.facebook.com/v2.7/${this.config.applicationID}/subscriptions?access_token=`
-    
+
     return fetch(oAuthUrl)
     .then(this._handleFacebookResponse)
     .then(res => res.json())
@@ -523,7 +523,7 @@ class Messenger extends EventEmitter {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         object: 'page',
-        callback_url: 'https://' + this.config.hostname + '/api/skin-messenger/webhook',
+        callback_url: 'https://' + this.config.hostname + '/api/botpress-messenger/webhook',
         verify_token: this.config.verifyToken,
         fields: ['message_deliveries', 'message_reads', 'messages', 'messaging_optins', 'messaging_postbacks']
       })

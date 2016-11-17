@@ -4,14 +4,14 @@ const Promise = require('bluebird');
 const path = require('path');
 const fs = require('fs');
 
-module.exports = function(skin, messenger) {
+module.exports = function(bp, messenger) {
 
   const filename = path.join(
-    skin.dataLocation, 
-    'skin-messenger.profiles.json'
+    bp.dataLocation,
+    'botpress-messenger.profiles.json'
     );
 
-  const loadUserProfiles = () => {      
+  const loadUserProfiles = () => {
     if(fs.existsSync(filename)) {
       return JSON.parse(fs.readFileSync(filename));
     }
@@ -21,7 +21,7 @@ module.exports = function(skin, messenger) {
   const saveUserProfiles = (profiles) => {
     const content = JSON.stringify(profiles)
     fs.writeFileSync(filename, content)
-    skin.logger.debug('messenger: saved user profiles to disk')
+    bp.logger.debug('messenger: saved user profiles to disk')
   };
 
   const userProfiles = loadUserProfiles();
@@ -43,6 +43,6 @@ module.exports = function(skin, messenger) {
         }
         return profile
       })
-    })  
+    })
   }
 };

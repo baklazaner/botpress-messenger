@@ -1,9 +1,9 @@
 {
-  "name": "skin-messenger",
+  "name": "botpress-messenger",
   "version": "1.0.0",
-  "description": "Official Facebook Messenger module for botskin",
+  "description": "Official Facebook Messenger module for botpress",
   "main": "bin/node.bundle.js",
-  "botskin": {
+  "botpress": {
     "menuText": "Messenger",
     "menuIcon": "message",
     "webBundle": "bin/web.bundle.js"

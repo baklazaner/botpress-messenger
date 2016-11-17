@@ -59,23 +59,23 @@ module.exports = {
 
     outgoing[event.type](event, next, messenger)
   },
-  init: function(skin) {
-    skin.messenger = {}
+  init: function(bp) {
+    bp.messenger = {}
     _.forIn(actions, (action, name) => {
       var pipeName = name.replace(/^create/, 'pipe')
-      skin.messenger[pipeName] = function() {
+      bp.messenger[pipeName] = function() {
         var msg = action.apply(this, arguments)
-        skin.outgoing(msg)
+        bp.outgoing(msg)
       }
     })
   },
-  ready: function(skin) {
-    const file = path.join(skin.projectLocation, skin.botfile.modulesConfigDir, 'skin-messenger.json')
+  ready: function(bp) {
+    const file = path.join(bp.projectLocation, bp.botfile.modulesConfigDir, 'botpress-messenger.json')
     const config = loadConfigFromFile(file)
 
-    messenger = new Messenger(skin, config);
+    messenger = new Messenger(bp, config);
 
-    const users = require('./users')(skin, messenger);
+    const users = require('./users')(bp, messenger);
 
     const messagesCache = LRU({
       max: 10000,
@@ -97,7 +97,7 @@ module.exports = {
       users.getOrFetchUserProfile(userId)
       .then((profile) => {
         // push the message to the incoming middleware
-        skin.incoming({
+        bp.incoming({
           platform: 'facebook',
           type: 'message', // TODO make this more specific
           user: profile,
@@ -107,12 +107,12 @@ module.exports = {
       })
     });
 
-    skin.getRouter("skin-messenger")
+    bp.getRouter("botpress-messenger")
     .get("/config", (req, res, next) => {
       res.send(messenger.getConfig())
     })
 
-    skin.getRouter("skin-messenger")
+    bp.getRouter("bp-messenger")
       .post("/config", (req, res, next) => {
         messenger.setConfig(req.body)
         saveConfigToFile(messenger.getConfig(), file)
@@ -125,13 +125,19 @@ module.exports = {
         })
     })
 
-    skin.getRouter('skin-messenger')
+    bp.getRouter('botpress-messenger')
     .get('/ngrok', (req, res, next) => {
       ngrok.getUrl()
       .then(url => res.send(url))
     })
 
-    skin.getRouter('skin-messenger')
+    bp.getRouter('botpress-messenger')
+    .get('/homepage', (req, res, next) => {
+      const pkg = require(path.join(__dirname, "package.json"))
+      res.send(pkg.homepage)
+    })
+
+    bp.getRouter('botpress-messenger')
     .post('/connection', (req, res, next) => {
       if(messenger.getConfig().connected) {
         messenger.disconnect()
@@ -144,7 +150,7 @@ module.exports = {
       }
     })
 
-    skin.getRouter("skin-messenger")
+    bp.getRouter("botpress-messenger")
     .post("/validation", (req, res, next) => {
       messenger.sendValidationRequest(req.body.applicationID, req.body.accessToken)
       .then((json) => {

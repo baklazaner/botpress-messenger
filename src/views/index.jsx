@@ -40,15 +40,22 @@ export default class MessengerModule extends React.Component {
   }
 
   getAxios() {
-    return this.props.skin.axios
+    return this.props.bp.axios
   }
 
-  componentDidMount(){
-    this.getAxios().get("/api/skin-messenger/config")
+  componentDidMount() {
+    this.getAxios().get("/api/botpress-messenger/config")
     .then((res) => {
       this.setState({
-        loading:false,
+        loading: false,
         ...res.data
+      })
+    });
+
+    axios.get("/api/botpress-messenger/homepage")
+    .then((res) => {
+      this.setState({
+        homepage: res.data
       })
     });
   }
@@ -56,7 +63,7 @@ export default class MessengerModule extends React.Component {
   handleSaveChanges() {
     this.setState({loading:true})
 
-    return this.getAxios().post("/api/skin-messenger/config", _.omit(this.state, 'loading'))
+    return this.getAxios().post("/api/botpress-messenger/config", _.omit(this.state, 'loading'))
     .then(res => {
       this.setState({
         message: 'success',
@@ -84,7 +91,7 @@ export default class MessengerModule extends React.Component {
    }
 
   handleValidation(event){
-    this.getAxios().post("/api/skin-messenger/validation", {
+    this.getAxios().post("/api/botpress-messenger/validation", {
       applicationID: this.state.applicationID,
       accessToken: this.state.accessToken
      })
@@ -104,7 +111,7 @@ export default class MessengerModule extends React.Component {
     }
 
     preConnection.then(() => {
-      return this.getAxios().post("/api/skin-messenger/connection", {
+      return this.getAxios().post("/api/botpress-messenger/connection", {
         applicationID: this.state.applicationID,
         accessToken: this.state.accessToken,
         appSecret: this.state.appSecret,
@@ -128,7 +135,7 @@ export default class MessengerModule extends React.Component {
 
   handleChangeNGrokCheckBox(event){
     if (!this.state.ngrok) {
-      this.getAxios().get('/api/skin-messenger/ngrok')
+      this.getAxios().get('/api/botpress-messenger/ngrok')
       .then(res => {
         this.setState({ hostname: res.data.replace(/https:\/\//i, '') })
       })
@@ -185,7 +192,7 @@ export default class MessengerModule extends React.Component {
   renderLabel(label, link){
     return (
       <Col componentClass={ControlLabel} sm={3}>
-        {label} <small>(<a href={link}>?</a>)</small>
+        {label} <small>(<a target="_blank" href={this.state.homepage+link}>?</a>)</small>
       </Col>
     )
   }
@@ -204,7 +211,7 @@ export default class MessengerModule extends React.Component {
 
   renderHostnameTextInput(props){
     const prefix = 'https://'
-    const suffix = '/api/skin-messenger/webhook'
+    const suffix = '/api/botpress-messenger/webhook'
 
     const getValidationState = () => {
       if(this.state.hostname){
@@ -445,8 +452,6 @@ export default class MessengerModule extends React.Component {
       style = 'danger'
       header += ' | Error updating settings'
     }
-    header += ' | '
-
 
     return <Panel header={header} bsStyle={style}>
       {this.renderForm()}
