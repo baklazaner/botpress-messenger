@@ -1,7 +1,7 @@
 {
   "name": "botpress-messenger",
   "version": "1.0.0",
-  "description": "Official Facebook Messenger module for botpress",
+  "description": "Official Messenger module for Botpress to easily bind chatbot to Facebook's page.",
   "main": "bin/node.bundle.js",
   "botpress": {
     "menuText": "Messenger",
@@ -13,7 +13,7 @@
     "watch": "node webpack.js --watch",
     "compile": "node webpack.js --compile"
   },
-  "author": "",
+  "author": "Protorisk DIFC",
   "license": "AGPL-3.0",
   "dependencies": {
     "bluebird": "^3.4.6",
