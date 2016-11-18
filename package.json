@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Official Messenger module for Botpress to easily bind chatbot to Facebook's page.",
   "main": "bin/node.bundle.js",
+  "homepage":"https://github.com/botpress/botpress-messenger",
   "botpress": {
     "menuText": "Messenger",
     "menuIcon": "message",
