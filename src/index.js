@@ -39,24 +39,31 @@ var saveConfigToFile = (config, file) => {
 
 let messenger = null
 
+const outgoingMiddleware = (event, next) => {
+  if(event.platform !== 'facebook') {
+    return next()
+  }
+
+  if(!outgoing[event.type]) {
+    return next('Unsupported event type: ' + event.type)
+  }
+
+  outgoing[event.type](event, next, messenger)
+}
+
 module.exports = {
-  outgoing: function(event, next) {
-
-    if(event.platform !== 'facebook') {
-      return next()
-    }
-
-    if(!messenger) {
-      return next('Module is not initialized yet.')
-    }
-
-    if(!outgoing[event.type]) {
-      return next('Unsupported event type: ' + event.type)
-    }
-
-    outgoing[event.type](event, next, messenger)
-  },
   init: function(bp) {
+
+    bp.registerMiddleware({
+      name: 'messenger.sendMessages',
+      type: 'outgoing',
+      order: 100,
+      handler: outgoingMiddleware,
+      module: 'botpress-messenger',
+      description: 'Sends out messages that targets platform = messenger.' + 
+      ' This middleware should be placed at the end as it swallows events once sent.'
+    })
+
     bp.messenger = {}
     _.forIn(actions, (action, name) => {
       var pipeName = name.replace(/^create/, 'pipe')
