@@ -297,8 +297,8 @@ export default class MessengerModule extends React.Component {
           <Col smOffset={3} sm={7}>
             <ControlLabel>Add a new domain:</ControlLabel>
             <FormControl ref={(input) => this.trustedDomainInput = input} type="text"/>
-            <Button bsStyle="primary" active onClick={() => this.handleAddToTrustedDomainsList()}>
-              <Glyphicon glyph="plus" /> Add
+            <Button className={style.messengerButton} onClick={() => this.handleAddToTrustedDomainsList()}>
+              Add domain
             </Button>
           </Col>
         </FormGroup>
@@ -337,8 +337,8 @@ export default class MessengerModule extends React.Component {
             </FormControl>
             <FormControl ref={r => this.newPersistentMenuTitle = r} type="text" placeholder="Title"/>
             <FormControl ref={r => this.newPersistentMenuValue = r} type="text" placeholder="Value"/>
-            <Button bsStyle="primary" active onClick={() => this.handleAddToPersistentMenuList()}>
-              <Glyphicon glyph="plus"/> Add
+            <Button className={style.messengerButton} onClick={() => this.handleAddToPersistentMenuList()}>
+              Add to menu
             </Button>
           </Col>
         </FormGroup>
@@ -348,13 +348,9 @@ export default class MessengerModule extends React.Component {
 
   renderSaveButton() {
     return (
-      <FormGroup>
-        <Col sm={12}>
-          <Button className="pull-right" bsStyle="success" active onClick={this.handleSaveChanges}>
-            <Glyphicon glyph="floppy-disk"/> Save
-          </Button>
-        </Col>
-      </FormGroup>
+      <Button className={style.messengerButton} onClick={this.handleSaveChanges}>
+        Save
+      </Button>
     )
   }
 
@@ -366,7 +362,7 @@ export default class MessengerModule extends React.Component {
 
   renderConnectionValidation() {
     const validatedText = <ControlLabel>All your connection settings are valid.</ControlLabel>
-    const button = <Button bsStyle="primary" active onClick={this.handleValidation}>Validate now!</Button>
+    const button = <Button className={style.messengerButton} onClick={this.handleValidation}>Validate</Button>
 
     return <FormGroup>
         {this.renderLabel('Validation', '#validation')}
@@ -378,13 +374,13 @@ export default class MessengerModule extends React.Component {
 
   renderConnectionButton() {
     const disconnectButton = (
-      <Button bsStyle="danger" active onClick={this.handleConnection}>
-        <Glyphicon glyph="stop"/> Disconnect
+      <Button className={style.messengerButton} onClick={this.handleConnection}>
+        Disconnect
       </Button>
     )
 
     const connectButton = (
-       <Button bsStyle="success" active onClick={this.handleConnection}>
+       <Button className={style.messengerButton} onClick={this.handleConnection}>
          <Glyphicon glyph="play"/>
          {this.state.message === 'warning' ? ' Save & Connect' : ' Connect'}
        </Button>
@@ -399,34 +395,47 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderForm(){
+  renderHeader(title) {
+    return <div className={style.header}>
+      <h4>{title}</h4>
+      {this.renderSaveButton()}
+    </div>
+  }
+
+  renderForm() {
     return (
       <Form horizontal>
         {this.state.error && this.renderErrorMessage()}
+        <div className={style.section}>
+          {this.renderHeader("Connexion")}
+          <div>
+            {this.renderTextInput('Application ID', 'applicationID', '#applicationid', { disabled: this.state.connected })}
+            {this.renderTextAreaInput('Access Token', 'accessToken', '#accesstoken', { disabled: this.state.connected })}
+            {this.renderTextInput('App Secret', 'appSecret', '#appsecret', { disabled: this.state.connected })}
+            {this.renderHostnameTextInput({ disabled: (this.state.ngrok || this.state.connected) })}
+            {this.renderNGrokCheckbox( {disabled: this.state.connected} )}
+            {this.renderConnectionValidation()}
+            {this.state.validated && this.renderConnectionButton()}
+          </div>
+        </div>
 
-        <Panel header="Connexion">
-          {this.renderTextInput('Application ID', 'applicationID', '#applicationid', { disabled: this.state.connected })}
-          {this.renderTextAreaInput('Access Token', 'accessToken', '#accesstoken', { disabled: this.state.connected })}
-          {this.renderTextInput('App Secret', 'appSecret', '#appsecret', { disabled: this.state.connected })}
-          {this.renderHostnameTextInput({ disabled: (this.state.ngrok || this.state.connected) })}
-          {this.renderNGrokCheckbox( {disabled: this.state.connected} )}
-          {this.renderConnectionValidation()}
-          {this.state.validated && this.renderConnectionButton()}
-        </Panel>
+        <div className={style.section}>
+          {this.renderHeader("General")}
+          <div>
+            {this.renderCheckBox('Display Get Started', 'displayGetStarted', '#displaygetstarted')}
+            {this.renderTextAreaInput('Greating message', 'greetingMessage', '#greetingmessage')}
+            {this.renderCheckBox('Persistent menu', 'persistentMenu', '#persistantmenu')}
+            {this.state.persistentMenu && this.renderPersistentMenuList()}
+            {this.renderCheckBox('Automatically mark as read', 'automaticallyMarkAsRead', '#automaticallymarkasread')}
+          </div>
+        </div>
 
-        <Panel header='General'>
-          {this.renderCheckBox('Display Get Started', 'displayGetStarted', '#displaygetstarted')}
-          {this.renderTextAreaInput('Greating message', 'greetingMessage', '#greetingmessage')}
-          {this.renderCheckBox('Persistent menu', 'persistentMenu', '#persistantmenu')}
-          {this.state.persistentMenu && this.renderPersistentMenuList()}
-          {this.renderCheckBox('Automatically mark as read', 'automaticallyMarkAsRead', '#automaticallymarkasread')}
-        </Panel>
-
-        <Panel header='Advanced'>
-          {this.renderTrustedDomainList()}
-        </Panel>
-
-        {this.renderSaveButton()}
+        <div className={style.section}>
+          {this.renderHeader("Advanced")}
+          <div>
+            {this.renderTrustedDomainList()}
+          </div>
+        </div>
       </Form>
     )
   }
