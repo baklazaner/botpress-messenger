@@ -476,6 +476,9 @@ class Messenger extends EventEmitter {
   }
 
   _verifyRequestSignature(req, res, buf) {
+    if(!/^\/webhook/i.test(req.path)) {
+      return
+    }
     var signature = req.headers['x-hub-signature']
     if (!signature) {
       throw new Error('Couldn\'t validate the request signature.')
