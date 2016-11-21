@@ -44,7 +44,7 @@ module.exports = function(bp, messenger) {
 
         return bp.db.saveUser({
           id: profile.id,
-          platform: 'messenger',
+          platform: 'facebook',
           gender: profile.gender,
           timezone: profile.timezone,
           locale: profile.locale,
