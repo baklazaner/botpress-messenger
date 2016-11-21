@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const Promise = require('bluebird')
 const ngrok = require('ngrok')
@@ -6,7 +6,7 @@ let url = null
 
 module.exports = {
   getUrl: (port) => {
-    if(url) {
+    if (url) {
       return Promise.resolve(url)
     }
 
@@ -16,7 +16,7 @@ module.exports = {
     .then(u => url = u)
   },
   stop: () => {
-    if(url) {
+    if (url) {
       ngrok.disconnect(url)
       url = null
     }

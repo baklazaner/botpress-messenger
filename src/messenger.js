@@ -1,21 +1,29 @@
-const Promise = require('bluebird');
-const EventEmitter = require('eventemitter2');
-const crypto = require('crypto');
-const fetch = require('node-fetch');
-const _ = require('lodash');
+/**
+ * Messenger
+ *
+ * This file contains one class Messenger, which in charge of communication between
+ * botpress and fb messenger.
+ *
+ */
+
+const Promise = require('bluebird')
+const EventEmitter = require('eventemitter2')
+const crypto = require('crypto')
+const fetch = require('node-fetch')
+const _ = require('lodash')
 const bodyParser = require('body-parser')
 
-fetch.promise = Promise;
+fetch.promise = Promise
 
 const normalizeString = function(str) {
-  return str.replace(/[^a-zA-Z0-9]+/g, '').toUpperCase();
+  return str.replace(/[^a-zA-Z0-9]+/g, '').toUpperCase()
 }
 
 class Messenger extends EventEmitter {
   constructor(bp, config) {
-    super();
-    if (!bp || !config){
-      throw new Error('You need to specify botpress and config');
+    super()
+    if (!bp || !config) {
+      throw new Error('You need to specify botpress and config')
     }
 
     this.setConfig(config)
@@ -27,19 +35,19 @@ class Messenger extends EventEmitter {
     this.app.use(bodyParser.json({
       verify: this._verifyRequestSignature.bind(this)
     }))
-    
-    this._initWebhook();
+
+    this._initWebhook()
   }
 
   setConfig(config) {
-    if (!config.accessToken || !config.verifyToken || !config.appSecret){
-      throw new Error('You need to specify an accessToken, verifyToken and appSecret');
+    if (!config.accessToken || !config.verifyToken || !config.appSecret) {
+      throw new Error('You need to specify an accessToken, verifyToken and appSecret')
     }
 
     this.config = config
   }
 
-  getConfig(){
+  getConfig() {
     return this.config
   }
 
@@ -53,30 +61,30 @@ class Messenger extends EventEmitter {
   }
 
   sendTextMessage(recipientId, text, quickReplies, options) {
-    const message = { text };
-    const formattedQuickReplies = this._formatQuickReplies(quickReplies);
+    const message = { text }
+    const formattedQuickReplies = this._formatQuickReplies(quickReplies)
     if (formattedQuickReplies && formattedQuickReplies.length > 0) {
-      message.quick_replies = formattedQuickReplies;
+      message.quick_replies = formattedQuickReplies
     }
-    return this.sendMessage(recipientId, message, options);
+    return this.sendMessage(recipientId, message, options)
   }
 
   sendButtonTemplate(recipientId, text, buttons, options) {
     const payload = {
       template_type: 'button',
       text
-    };
-    const formattedButtons = this._formatButtons(buttons);
-    payload.buttons = formattedButtons;
-    return this.sendTemplate(recipientId, payload, options);
+    }
+    const formattedButtons = this._formatButtons(buttons)
+    payload.buttons = formattedButtons
+    return this.sendTemplate(recipientId, payload, options)
   }
 
   sendGenericTemplate(recipientId, elements, options) {
     const payload = {
       template_type: 'generic',
       elements
-    };
-    return this.sendTemplate(recipientId, payload, options);
+    }
+    return this.sendTemplate(recipientId, payload, options)
   }
 
   sendTemplate(recipientId, payload, options) {
@@ -85,8 +93,8 @@ class Messenger extends EventEmitter {
         type: 'template',
         payload
       }
-    };
-    return this.sendMessage(recipientId, message, options);
+    }
+    return this.sendMessage(recipientId, message, options)
   }
 
   sendAttachment(recipientId, type, url, quickReplies, options) {
@@ -95,12 +103,12 @@ class Messenger extends EventEmitter {
         type,
         payload: { url }
       }
-    };
-    const formattedQuickReplies = this._formatQuickReplies(quickReplies);
-    if (formattedQuickReplies && formattedQuickReplies.length > 0) {
-      message.quick_replies = formattedQuickReplies;
     }
-    return this.sendMessage(recipientId, message, options);
+    const formattedQuickReplies = this._formatQuickReplies(quickReplies)
+    if (formattedQuickReplies && formattedQuickReplies.length > 0) {
+      message.quick_replies = formattedQuickReplies
+    }
+    return this.sendMessage(recipientId, message, options)
   }
 
   sendAction(recipientId, action) {
@@ -109,35 +117,35 @@ class Messenger extends EventEmitter {
         id: recipientId
       },
       sender_action: action
-    });
+    })
   }
 
   sendMessage(recipientId, message, options) {
-    const onDelivery = options && options.onDelivery;
-    const onRead = options && options.onRead;
+    const onDelivery = options && options.onDelivery
+    const onRead = options && options.onRead
     const req = () => this.sendRequest({
-        recipient: {
-          id: recipientId
-        },
-        message
-      })
-    .then((json) => {
+      recipient: {
+        id: recipientId
+      },
+      message
+    })
+      .then((json) => {
         if (typeof onDelivery === 'function') {
-          this.once('delivery', onDelivery);
+          this.once('delivery', onDelivery)
         }
         if (typeof onRead === 'function') {
-          this.once('read', onRead);
+          this.once('read', onRead)
         }
-        return json;
+        return json
       })
 
     if (options && options.typing) {
-      const autoTimeout = (message && message.text) ? 500 + message.text.length * 10 : 1000;
-      const timeout = (typeof options.typing === 'number') ? options.typing : autoTimeout;
-      return this.sendTypingIndicator(recipientId, timeout).then(req);
+      const autoTimeout = (message && message.text) ? 500 + message.text.length * 10 : 1000
+      const timeout = (typeof options.typing === 'number') ? options.typing : autoTimeout
+      return this.sendTypingIndicator(recipientId, timeout).then(req)
     }
 
-    return req();
+    return req()
   }
 
   sendValidationRequest(applicationID, accessToken) {
@@ -157,8 +165,8 @@ class Messenger extends EventEmitter {
   }
 
   sendRequest(body, endpoint, method) {
-    endpoint = endpoint || 'messages';
-    method = method || 'POST';
+    endpoint = endpoint || 'messages'
+    method = method || 'POST'
     return fetch(`https://graph.facebook.com/v2.7/me/${endpoint}?access_token=${this.config.accessToken}`, {
       method,
       headers: { 'Content-Type': 'application/json' },
@@ -169,14 +177,14 @@ class Messenger extends EventEmitter {
   }
 
   sendThreadRequest(body, method) {
-    return this.sendRequest(body, 'thread_settings', method);
+    return this.sendRequest(body, 'thread_settings', method)
   }
 
   sendTypingIndicator(recipientId, milliseconds) {
     let timeout = !milliseconds || isNaN(milliseconds) ? 0 : milliseconds
     timeout = Math.min(20000, timeout)
 
-    if(milliseconds === true) {
+    if (milliseconds === true) {
       timeout = 1000
     }
 
@@ -190,27 +198,27 @@ class Messenger extends EventEmitter {
   }
 
   getUserProfile(userId) {
-    const url = `https://graph.facebook.com/v2.7/${userId}?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=${this.config.accessToken}`;
+    const url = `https://graph.facebook.com/v2.7/${userId}?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=${this.config.accessToken}`
     return fetch(url)
       .then(this._handleFacebookResponse)
       .then(res => res.json())
-      .catch(err => console.log(`Error getting user profile: ${err}`));
+      .catch(err => console.log(`Error getting user profile: ${err}`))
   }
 
   setWhitelistedDomains(domains) {
-    const url = `https://graph.facebook.com/v2.7/me/thread_settings?fields=whitelisted_domains&access_token=${this.config.accessToken}`;
+    const url = `https://graph.facebook.com/v2.7/me/thread_settings?fields=whitelisted_domains&access_token=${this.config.accessToken}`
     return fetch(url)
       .then(this._handleFacebookResponse)
       .then(res => res.json())
       .then((json) => {
-        if(json && json.data && json.data[0]) {
+        if (json && json.data && json.data[0]) {
           return json.data[0].whitelisted_domains
         } else {
           return []
         }
       })
       .then((oldDomains) => {
-        if(!oldDomains || !oldDomains.length) {
+        if (!oldDomains || !oldDomains.length) {
           return
         }
 
@@ -241,48 +249,48 @@ class Messenger extends EventEmitter {
     return this.sendThreadRequest({
       setting_type: 'greeting',
       greeting: { text }
-    });
+    })
   }
 
   deleteGreetingText() {
-   return this.sendThreadRequest({
+    return this.sendThreadRequest({
       setting_type: 'greeting'
-    }, 'DELETE');
+    }, 'DELETE')
   }
 
   setGetStartedButton(action) {
-    const payload = (typeof action === 'string') ? action : 'GET_STARTED';
+    const payload = (typeof action === 'string') ? action : 'GET_STARTED'
     if (typeof action === 'function') {
-      this.on(`postback:${payload}`, action);
+      this.on(`postback:${payload}`, action)
     }
     return this.sendThreadRequest({
       setting_type: 'call_to_actions',
       thread_state: 'new_thread',
       call_to_actions: [ { payload } ]
-    });
+    })
   }
 
   deleteGetStartedButton() {
     return this.sendThreadRequest({
       setting_type: 'call_to_actions',
       thread_state: 'new_thread'
-    }, 'DELETE');
+    }, 'DELETE')
   }
 
   setPersistentMenu(buttons) {
-    const formattedButtons = this._formatButtons(buttons);
+    const formattedButtons = this._formatButtons(buttons)
     return this.sendThreadRequest({
       setting_type: 'call_to_actions',
       thread_state: 'existing_thread',
       call_to_actions: formattedButtons
-    });
+    })
   }
 
   deletePersistentMenu() {
     return this.sendThreadRequest({
       setting_type: 'call_to_actions',
       thread_state: 'existing_thread'
-    }, 'DELETE');
+    }, 'DELETE')
   }
 
   updateSettings() {
@@ -303,7 +311,7 @@ class Messenger extends EventEmitter {
 
     let thrown = false
     const contextifyError = (context) => (err) => {
-      if(thrown) throw err
+      if (thrown) throw err
       const message = `Error setting ${context}\n${err.message}`
       thrown = true
       throw new Error(message)
@@ -320,7 +328,7 @@ class Messenger extends EventEmitter {
   }
 
   module(factory) {
-    return factory.apply(this, [ this ]);
+    return factory.apply(this, [ this ])
   }
 
   _formatButtons(buttons) {
@@ -330,12 +338,12 @@ class Messenger extends EventEmitter {
           type: 'postback',
           title: button,
           payload: 'BUTTON_' + normalizeString(button)
-        };
+        }
       } else if (button && button.title) {
-        return button;
+        return button
       }
-      return {};
-    });
+      return {}
+    })
   }
 
   _formatQuickReplies(quickReplies) {
@@ -345,69 +353,67 @@ class Messenger extends EventEmitter {
           content_type: 'text',
           title: reply,
           payload: 'QR_' + normalizeString(reply)
-        };
+        }
       } else if (reply && reply.title) {
         return {
           content_type: reply.content_type || 'text',
           title: reply.title,
           payload: reply.payload || 'QR_' + normalizeString(reply.title)
-        };
+        }
       }
-      return {};
-    });
+      return {}
+    })
   }
 
   _handleEvent(type, event, data) {
-    this.emit(type, event, data);
+    this.emit(type, event, data)
   }
 
   _handleMessageEvent(event) {
-    if (this._handleConversationResponse('message', event)) { return; }
-    const text = event.message.text;
-    const senderId = event.sender.id;
-    let captured = false;
-    if (!text) { return; }
+    if (this._handleConversationResponse('message', event)) { return }
+    const text = event.message.text
+    let captured = false
+    if (!text) { return }
 
-    this._handleEvent('message', event, { captured });
+    this._handleEvent('message', event, { captured })
   }
 
   _handleAttachmentEvent(event) {
-    if (this._handleConversationResponse('attachment', event)) { return; }
-    this._handleEvent('attachment', event);
+    if (this._handleConversationResponse('attachment', event)) { return }
+    this._handleEvent('attachment', event)
   }
 
   _handlePostbackEvent(event) {
-    if (this._handleConversationResponse('postback', event)) { return; }
-    const payload = event.postback.payload;
+    if (this._handleConversationResponse('postback', event)) { return }
+    const payload = event.postback.payload
     if (payload) {
-      this._handleEvent(`postback:${payload}`, event);
+      this._handleEvent(`postback:${payload}`, event)
     }
-    this._handleEvent('postback', event);
+    this._handleEvent('postback', event)
   }
 
   _handleQuickReplyEvent(event) {
-    if (this._handleConversationResponse('quick_reply', event)) { return; }
-    const payload = event.message.quick_reply && event.message.quick_reply.payload;
+    if (this._handleConversationResponse('quick_reply', event)) { return }
+    const payload = event.message.quick_reply && event.message.quick_reply.payload
     if (payload) {
-      this._handleEvent(`quick_reply:${payload}`, event);
+      this._handleEvent(`quick_reply:${payload}`, event)
     }
-    this._handleEvent('quick_reply', event);
+    this._handleEvent('quick_reply', event)
   }
 
-  _handleConversationResponse(type, event) {
-    const userId = event.sender.id;
-    let captured = false;
-    return captured;
+  _handleConversationResponse() {
+    let captured = false
+    return captured
   }
 
   _handleFacebookResponse(res) {
-    if(!res) return
+    if (!res) return
 
-    if(res.status < 400) {
+    if (res.status < 400) {
       return res
     }
 
-    let errorMessage = "An error has been returned by Facebook API."
+    let errorMessage = 'An error has been returned by Facebook API.'
     errorMessage += '\nStatus: ' + res.status + ' (' + res.statusText + ')'
 
     return Promise.resolve(true)
@@ -424,82 +430,83 @@ class Messenger extends EventEmitter {
     this.app.get('/webhook', (req, res) => {
       if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === this.config.verifyToken) {
 
-        res.status(200).send(req.query['hub.challenge']);
+        res.status(200).send(req.query['hub.challenge'])
       } else {
-        console.error('Failed validation. Make sure the validation tokens match.');
-        res.sendStatus(403);
+        console.error('Failed validation. Make sure the validation tokens match.')
+        res.sendStatus(403)
       }
-    });
+    })
 
     this.app.post('/webhook', (req, res) => {
-      var data = req.body;
+      var data = req.body
       if (data.object !== 'page') {
-        return;
+        return
       }
 
       // Iterate over each entry. There may be multiple if batched.
       data.entry.forEach((entry) => {
-          if(entry && !entry.messaging) {
+        if (entry && !entry.messaging) {
+          return
+        }
+        // Iterate over each messaging event
+        entry.messaging.forEach((event) => {
+          if (event.message && event.message.is_echo && !this.config.broadcastEchoes) {
             return
           }
-          // Iterate over each messaging event
-          entry.messaging.forEach((event) => {
-            if (event.message && event.message.is_echo && !this.config.broadcastEchoes) {
-              return
+          if (event.optin) {
+            this._handleEvent('authentication', event)
+          } else if (event.message && event.message.text) {
+            this._handleMessageEvent(event)
+            if (event.message.quick_reply) {
+              this._handleQuickReplyEvent(event)
             }
-            if (event.optin) {
-              this._handleEvent('authentication', event);
-            } else if (event.message && event.message.text) {
-              this._handleMessageEvent(event);
-              if (event.message.quick_reply) {
-                this._handleQuickReplyEvent(event);
-              }
-            } else if (event.message && event.message.attachments) {
-              this._handleAttachmentEvent(event);
-            } else if (event.postback) {
-              this._handlePostbackEvent(event);
-            } else if (event.delivery) {
-              this._handleEvent('delivery', event);
-            } else if (event.read) {
-              this._handleEvent('read', event);
-            } else if (event.account_linking) {
-              this._handleEvent('account_linking', event);
-            } else {
-              console.log('Webhook received unknown event: ', event);
-            }
-          });
-        });
+          } else if (event.message && event.message.attachments) {
+            this._handleAttachmentEvent(event)
+          } else if (event.postback) {
+            this._handlePostbackEvent(event)
+          } else if (event.delivery) {
+            this._handleEvent('delivery', event)
+          } else if (event.read) {
+            this._handleEvent('read', event)
+          } else if (event.account_linking) {
+            this._handleEvent('account_linking', event)
+          } else {
+            console.log('Webhook received unknown event: ', event)
+          }
+        })
+      })
 
-        // Must send back a 200 within 20 seconds or the request will time out.
-        res.sendStatus(200);
-    });
+      // Must send back a 200 within 20 seconds or the request will time out.
+      res.sendStatus(200)
+    })
   }
 
   _verifyRequestSignature(req, res, buf) {
-    if(!/^\/webhook/i.test(req.path)) {
+    if (!/^\/webhook/i.test(req.path)) {
       return
     }
+
     var signature = req.headers['x-hub-signature']
     if (!signature) {
       throw new Error('Couldn\'t validate the request signature.')
     } else {
-      let [method, hash] = signature.split('=')
+      let [, hash] = signature.split('=')
       var expectedHash = crypto.createHmac('sha1', this.config.appSecret).update(buf).digest('hex')
 
       if (hash != expectedHash) {
-        throw new Error("Couldn't validate the request signature.")
+        throw new Error('Couldn\'t validate the request signature.')
       }
     }
   }
 
   _reformatPersistentMenuItems() {
-    if(this.config.persistentMenu && this.config.persistentMenuItems) {
+    if (this.config.persistentMenu && this.config.persistentMenuItems) {
       return this.config.persistentMenuItems.map((item) => {
 
-        if(item.value && item.type === 'postback') {
+        if (item.value && item.type === 'postback') {
           item.payload = item.value
           delete item.value
-        } else if(item.value && item.type === 'url') {
+        } else if (item.value && item.type === 'url') {
           item.url = item.value
           item.type = 'web_url'
           delete item.value
@@ -555,4 +562,4 @@ class Messenger extends EventEmitter {
 
 }
 
-module.exports = Messenger;
+module.exports = Messenger
