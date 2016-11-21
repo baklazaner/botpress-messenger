@@ -439,29 +439,27 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderMainPanel(){
+  renderMessagePanel(){
     let style = 'info'
-    let header = 'Messenger settings'
-
+    let text = ''
     if(this.state.message && this.state.message === 'success') {
       style = 'success'
-      header += ' | New settings have been updated successfully'
+      text += 'New settings have been updated successfully'
     } else if (this.state.message && this.state.message === 'warning') {
       style = 'warning'
-      header += ' | You have unsaved changes'
+      text += 'You have unsaved changes'
     } else if (this.state.error) {
       style = 'danger'
-      header += ' | Error updating settings'
+      text += 'Error updating settings'
     }
 
-    return <Panel header={header} bsStyle={style}>
-      {this.renderForm()}
-    </Panel>
+    return <Panel bsStyle={style}>{text}</Panel>
   }
 
   render() {
     return <div>
-      {this.state.loading ? null : this.renderMainPanel()}
+      {this.renderMessagePanel()}
+      {this.state.loading ? null : this.renderForm()}
     </div>
   }
 }

@@ -2,6 +2,9 @@
   margin-bottom: 5px;
 }
 
+:global(.panel-body) {
+  color: gray;
+}
 
 .errorMessage {
   white-space: pre-wrap;
@@ -13,14 +16,14 @@
 
 .section {
   background-color: #fff;
-  border: solid 1px lightgray;
   border-radius: 5px;
   margin-bottom: 20px;
+  padding-bottom: 10px;
 }
 
 .header {
   position:relative;
-  border-bottom: solid 1px lightgray;
+  border-bottom: solid 1px #eeeeee;
   margin-bottom: 20px;
 
   h4 {
@@ -35,6 +38,10 @@
     top: 10px;
     right: 10px;
   }
+}
+
+.messagePanel {
+  color: gray;
 }
 
 .messengerButton {
