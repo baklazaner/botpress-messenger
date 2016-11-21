@@ -32,10 +32,6 @@ class Messenger extends EventEmitter {
   }
 
   setConfig(config) {
-    if (!config.accessToken || !config.verifyToken || !config.appSecret){
-      throw new Error('You need to specify an accessToken, verifyToken and appSecret');
-    }
-
     this.config = config
   }
 
