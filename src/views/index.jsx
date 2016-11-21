@@ -381,7 +381,6 @@ export default class MessengerModule extends React.Component {
 
     const connectButton = (
        <Button className={style.messengerButton} onClick={this.handleConnection}>
-         <Glyphicon glyph="play"/>
          {this.state.message === 'warning' ? ' Save & Connect' : ' Connect'}
        </Button>
      )
