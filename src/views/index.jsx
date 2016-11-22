@@ -21,7 +21,7 @@ import style from './style.scss'
 
 export default class MessengerModule extends React.Component {
 
-  constructor(props){
+  constructor(props) {
     super(props)
 
     this.state = {loading:true}
@@ -44,7 +44,7 @@ export default class MessengerModule extends React.Component {
   }
 
   componentDidMount() {
-    this.getAxios().get("/api/botpress-messenger/config")
+    this.getAxios().get('/api/botpress-messenger/config')
     .then((res) => {
       this.setState({
         loading: false,
@@ -56,8 +56,8 @@ export default class MessengerModule extends React.Component {
   handleSaveChanges() {
     this.setState({loading:true})
 
-    return this.getAxios().post("/api/botpress-messenger/config", _.omit(this.state, 'loading'))
-    .then(res => {
+    return this.getAxios().post('/api/botpress-messenger/config', _.omit(this.state, 'loading'))
+    .then(() => {
       this.setState({
         message: 'success',
         loading: false,
@@ -65,30 +65,30 @@ export default class MessengerModule extends React.Component {
       })
     })
     .catch((err) => {
-     this.setState({
-       loading: false,
-       error: err.response.data.message
-     })
+      this.setState({
+        loading: false,
+        error: err.response.data.message
+      })
     })
   }
 
-   handleChange(event){
-     var { name, value } = event.target
+  handleChange(event) {
+    var { name, value } = event.target
 
-     var connectionInputList = ['applicationID', 'accessToken', 'hostname', 'ngrok', 'appSecret']
-     if(_.includes(connectionInputList, name)){
-       this.setState({ validated: false })
-     }
+    var connectionInputList = ['applicationID', 'accessToken', 'hostname', 'ngrok', 'appSecret']
+    if (_.includes(connectionInputList, name)) {
+      this.setState({ validated: false })
+    }
 
-     this.setState({ message:'warning', [name]: value })
-   }
+    this.setState({ message:'warning', [name]: value })
+  }
 
-  handleValidation(event){
-    this.getAxios().post("/api/botpress-messenger/validation", {
+  handleValidation() {
+    this.getAxios().post('/api/botpress-messenger/validation', {
       applicationID: this.state.applicationID,
       accessToken: this.state.accessToken
-     })
-    .then((res) => {
+    })
+    .then(() => {
       this.setState({validated: true})
     })
     .catch((res) => {
@@ -96,23 +96,23 @@ export default class MessengerModule extends React.Component {
     })
   }
 
-  handleConnection(event){
+  handleConnection(event) {
     let preConnection = Promise.resolve()
 
-    if(this.state.message === 'warning') {
+    if (this.state.message === 'warning') {
       preConnection = this.handleSaveChanges()
     }
 
     preConnection.then(() => {
-      return this.getAxios().post("/api/botpress-messenger/connection", {
+      return this.getAxios().post('/api/botpress-messenger/connection', {
         applicationID: this.state.applicationID,
         accessToken: this.state.accessToken,
         appSecret: this.state.appSecret,
         hostname: this.state.hostname
-       })
-      .then((res) => {
+      })
+      .then(() => {
         this.setState({ connected: !this.state.connected })
-        setImmediate(() => this.handleSaveChanges(event))
+        window.setImmediate(() => this.handleSaveChanges(event))
       })
       .catch((res) => {
         this.setState({ error: res.data.message, loading: false })
@@ -120,13 +120,13 @@ export default class MessengerModule extends React.Component {
     })
   }
 
-  handleChangeCheckBox(event){
+  handleChangeCheckBox(event) {
     this.setState({message:'warning'})
     var { name } = event.target
     this.setState({[name]: !this.state[name]})
   }
 
-  handleChangeNGrokCheckBox(event){
+  handleChangeNGrokCheckBox() {
     if (!this.state.ngrok) {
       this.getAxios().get('/api/botpress-messenger/ngrok')
       .then(res => {
@@ -141,15 +141,15 @@ export default class MessengerModule extends React.Component {
     })
   }
 
-  handleRemoveFromList(value, name){
+  handleRemoveFromList(value, name) {
     this.setState({message:'warning'})
     this.setState({[name]: _.without(this.state[name], value)})
   }
 
-  handleAddToTrustedDomainsList(){
+  handleAddToTrustedDomainsList() {
     this.setState({message:'warning'})
     const input = ReactDOM.findDOMNode(this.trustedDomainInput)
-    if(input && input.value !== ''){
+    if (input && input.value !== '') {
       this.setState({
         trustedDomains: _.concat(this.state.trustedDomains, input.value)
       })
@@ -169,7 +169,7 @@ export default class MessengerModule extends React.Component {
       value: value && value.value
     }
 
-    if(_.some(_.values(item), _.isEmpty)) {
+    if (_.some(_.values(item), _.isEmpty)) {
       return
     }
 
@@ -182,7 +182,7 @@ export default class MessengerModule extends React.Component {
     value.value = ''
   }
 
-  renderLabel(label, link){
+  renderLabel(label, link) {
     return (
       <Col componentClass={ControlLabel} sm={3}>
         {label} <small>(<a target="_blank" href={this.state.homepage+link}>?</a>)</small>
@@ -190,7 +190,7 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderTextInput(label, name, link, props = {}){
+  renderTextInput(label, name, link, props = {}) {
     return (
       <FormGroup>
         {this.renderLabel(label, link)}
@@ -202,12 +202,12 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderHostnameTextInput(props){
+  renderHostnameTextInput(props) {
     const prefix = 'https://'
     const suffix = '/api/botpress-messenger/webhook'
 
     const getValidationState = () => {
-      if(this.state.hostname){
+      if (this.state.hostname) {
         var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi
         var regex = new RegExp(expression)
 
@@ -218,7 +218,7 @@ export default class MessengerModule extends React.Component {
 
     return (
       <FormGroup validationState={getValidationState()}>
-        {this.renderLabel('Hostname', "#hostname")}
+        {this.renderLabel('Hostname', '#hostname')}
         <Col sm={7}>
           <InputGroup>
             <InputGroup.Addon>{prefix}</InputGroup.Addon>
@@ -232,7 +232,7 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderNGrokCheckbox(props){
+  renderNGrokCheckbox(props) {
     return (
       <FormGroup>
         {this.renderLabel('Use ngrok', '#hgrok')}
@@ -244,7 +244,7 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderTextAreaInput(label, name, link, props = {}){
+  renderTextAreaInput(label, name, link, props = {}) {
     return (
       <FormGroup>
         {this.renderLabel(label, link)}
@@ -258,7 +258,7 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderCheckBox(label, name, link){
+  renderCheckBox(label, name, link) {
     return (
       <FormGroup>
         {this.renderLabel(label, link)}
@@ -271,7 +271,7 @@ export default class MessengerModule extends React.Component {
   }
 
   renderDomainElement(domain) {
-    const removeHandler = () => this.handleRemoveFromList(domain, "trustedDomains")
+    const removeHandler = () => this.handleRemoveFromList(domain, 'trustedDomains')
 
     return <ListGroupItem key={domain}>
       {domain}
@@ -279,13 +279,13 @@ export default class MessengerModule extends React.Component {
     </ListGroupItem>
   }
 
-  renderTrustedDomainList(){
+  renderTrustedDomainList() {
     const trustedDomainElements = this.state.trustedDomains.map(this.renderDomainElement)
 
     return (
       <div>
         <FormGroup>
-          {this.renderLabel("Trusted Domains", "#trusteddomains")}
+          {this.renderLabel('Trusted Domains', '#trusteddomains')}
           <Col sm={7}>
             <ControlLabel>Current trusted domains:</ControlLabel>
             <ListGroup>
@@ -309,7 +309,7 @@ export default class MessengerModule extends React.Component {
   renderPersistentMenuItem(item) {
     const handleRemove = () => this.handleRemoveFromList(item, 'persistentMenuItems')
     return <ListGroupItem key={item.title}>
-        {item.type + " | " + item.title + " | " + item.value}
+        {item.type + ' | ' + item.title + ' | ' + item.value}
         <Glyphicon
           className="pull-right"
           glyph="remove"
@@ -406,7 +406,7 @@ export default class MessengerModule extends React.Component {
       <Form horizontal>
         {this.state.error && this.renderErrorMessage()}
         <div className={style.section}>
-          {this.renderHeader("Connexion")}
+          {this.renderHeader('Connexion')}
           <div>
             {this.renderTextInput('Application ID', 'applicationID', '#applicationid', { disabled: this.state.connected })}
             {this.renderTextAreaInput('Access Token', 'accessToken', '#accesstoken', { disabled: this.state.connected })}
@@ -419,7 +419,7 @@ export default class MessengerModule extends React.Component {
         </div>
 
         <div className={style.section}>
-          {this.renderHeader("General")}
+          {this.renderHeader('General')}
           <div>
             {this.renderCheckBox('Display Get Started', 'displayGetStarted', '#displaygetstarted')}
             {this.renderTextAreaInput('Greating message', 'greetingMessage', '#greetingmessage')}
@@ -430,7 +430,7 @@ export default class MessengerModule extends React.Component {
         </div>
 
         <div className={style.section}>
-          {this.renderHeader("Advanced")}
+          {this.renderHeader('Advanced')}
           <div>
             {this.renderTrustedDomainList()}
           </div>
@@ -439,10 +439,10 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderMessagePanel(){
+  renderMessagePanel() {
     let style = 'info'
     let text = ''
-    if(this.state.message && this.state.message === 'success') {
+    if (this.state.message && this.state.message === 'success') {
       style = 'success'
       text += 'New settings have been updated successfully'
     } else if (this.state.message && this.state.message === 'warning') {

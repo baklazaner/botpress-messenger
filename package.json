@@ -3,13 +3,17 @@
   "version": "1.0.1",
   "description": "Official Facebook Messenger connector for botpress",
   "main": "bin/node.bundle.js",
-  "homepage":"https://github.com/botpress/botpress-messenger",
+  "homepage": "https://github.com/botpress/botpress-messenger",
   "botpress": {
     "menuText": "Messenger",
     "menuIcon": "message",
     "webBundle": "bin/web.bundle.js"
   },
-  "keywords":["messenger", "facebook", "botpress"],
+  "keywords": [
+    "messenger",
+    "facebook",
+    "botpress"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "node webpack.js --watch",
@@ -43,6 +47,7 @@
     "classnames": "^2.2.5",
     "copy-webpack-plugin": "^4.0.0",
     "css-loader": "^0.25.0",
+    "eslint-plugin-react": "^6.7.1",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "json-loader": "^0.5.4",
