@@ -1,5 +1,5 @@
-var path = require('path')
-var fs = require('fs')
+const path = require('path')
+const fs = require('fs')
 const LRU = require('lru-cache')
 const _ = require('lodash')
 const uuid = require('node-uuid')
@@ -9,20 +9,29 @@ const actions = require('./actions')
 const outgoing = require('./outgoing')
 const ngrok = require('./ngrok')
 
-var loadConfigFromFile = (file) => {
+/**
+ * Load config from given file path
+ *
+ * If the file doesn't exist,
+ * then it will write default one into the given file path
+ *
+ * @param {string} file - the file path
+ * @return {Object} config object
+ */
+const loadConfigFromFile = (file) => {
 
-  if(!fs.existsSync(file)){
+  if (!fs.existsSync(file)) {
     const config = {
-      applicationID: "",
-      accessToken : "",
-      appSecret : "",
+      applicationID: '',
+      accessToken : '',
+      appSecret : '',
       verifyToken : uuid.v4(),
       validated: false,
       connected: false,
       hostname: '',
       ngrok: false,
       displayGetStarted : false,
-      greetingMessage : "Default greeting message",
+      greetingMessage : 'Default greeting message',
       persistentMenu : false,
       persistentMenuItems : [],
       automaticallyMarkAsRead : false,
@@ -30,7 +39,7 @@ var loadConfigFromFile = (file) => {
     }
     saveConfigToFile(config,file)
   }
-  return JSON.parse(fs.readFileSync(file, "utf-8"))
+  return JSON.parse(fs.readFileSync(file, 'utf-8'))
 }
 
 var saveConfigToFile = (config, file) => {
@@ -40,11 +49,11 @@ var saveConfigToFile = (config, file) => {
 let messenger = null
 
 const outgoingMiddleware = (event, next) => {
-  if(event.platform !== 'facebook') {
+  if (event.platform !== 'facebook') {
     return next()
   }
 
-  if(!outgoing[event.type]) {
+  if (!outgoing[event.type]) {
     return next('Unsupported event type: ' + event.type)
   }
 
@@ -60,7 +69,7 @@ module.exports = {
       order: 100,
       handler: outgoingMiddleware,
       module: 'botpress-messenger',
-      description: 'Sends out messages that targets platform = messenger.' + 
+      description: 'Sends out messages that targets platform = messenger.' +
       ' This middleware should be placed at the end as it swallows events once sent.'
     })
 
@@ -77,9 +86,9 @@ module.exports = {
     const file = path.join(bp.projectLocation, bp.botfile.modulesConfigDir, 'botpress-messenger.json')
     const config = loadConfigFromFile(file)
 
-    messenger = new Messenger(bp, config);
+    messenger = new Messenger(bp, config)
 
-    const users = require('./users')(bp, messenger);
+    const users = require('./users')(bp, messenger)
 
     const messagesCache = LRU({
       max: 10000,
@@ -90,7 +99,7 @@ module.exports = {
       const userId = payload.sender.id
       const mid = payload.message.mid
 
-      if(messagesCache.has(mid)) {
+      if (messagesCache.has(mid)) {
         // We already processed this message
         return
       } else {
@@ -109,35 +118,35 @@ module.exports = {
           raw: payload
         })
       })
-    });
-
-    bp.getRouter("botpress-messenger")
-    .get("/config", (req, res, next) => {
-      res.send(messenger.getConfig())
-    })
-
-    bp.getRouter("botpress-messenger")
-      .post("/config", (req, res, next) => {
-        messenger.setConfig(req.body)
-        saveConfigToFile(messenger.getConfig(), file)
-        messenger.updateSettings()
-        .then(() => {
-          res.sendStatus(200)
-        })
-        .catch((err) => {
-          res.status(500).send({ message: err.message })
-        })
     })
 
     bp.getRouter('botpress-messenger')
-    .get('/ngrok', (req, res, next) => {
+    .get('/config', (req, res) => {
+      res.send(messenger.getConfig())
+    })
+
+    bp.getRouter('botpress-messenger')
+    .post('/config', (req, res) => {
+      messenger.setConfig(req.body)
+      saveConfigToFile(messenger.getConfig(), file)
+      messenger.updateSettings()
+      .then(() => {
+        res.sendStatus(200)
+      })
+      .catch((err) => {
+        res.status(500).send({ message: err.message })
+      })
+    })
+
+    bp.getRouter('botpress-messenger')
+    .get('/ngrok', (req, res) => {
       ngrok.getUrl()
       .then(url => res.send(url))
     })
 
     bp.getRouter('botpress-messenger')
-    .post('/connection', (req, res, next) => {
-      if(messenger.getConfig().connected) {
+    .post('/connection', (req, res) => {
+      if (messenger.getConfig().connected) {
         messenger.disconnect()
         .then(() => res.sendStatus(200))
         .catch((err) => res.status(500).send({ message: err.message }))
@@ -148,8 +157,8 @@ module.exports = {
       }
     })
 
-    bp.getRouter("botpress-messenger")
-    .post("/validation", (req, res, next) => {
+    bp.getRouter('botpress-messenger')
+    .post('/validation', (req, res) => {
       messenger.sendValidationRequest(req.body.applicationID, req.body.accessToken)
       .then((json) => {
         res.send(json)

@@ -38,3 +38,6 @@ jspm_packages
 
 bin
 stats.json
+
+# vim
+*.swp

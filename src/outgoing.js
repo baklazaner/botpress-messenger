@@ -43,7 +43,7 @@ const handleSeen = (event, next, messenger) => {
 }
 
 const handleGetStarted = (event, next, messenger) => {
-  if(event.raw.enabled) {
+  if (event.raw.enabled) {
     messenger.setGetStartedButton(event.raw.postback)
     .then(() => next())
     .catch(err => next(err))
@@ -54,20 +54,20 @@ const handleGetStarted = (event, next, messenger) => {
   }
 }
 
-const handlePersistentMenu = (event, next, mesenger) => {
-  if(event.raw.delete) {
+const handlePersistentMenu = (event, next, messenger) => {
+  if (event.raw.delete) {
     messenger.deletePersistentMenu()
     .then(() => next())
     .catch(err => next(err))
   } else {
-    mesenger.setPersistentMenu(event.raw.elements)
+    messenger.setPersistentMenu(event.raw.elements)
     .then(() => next())
     .catch(err => next(err))
   }
 }
 
 const handleGreetingText = (event, next, messenger) => {
-  if(event.raw.text) {
+  if (event.raw.text) {
     messenger.setGreetingText(event.raw.text)
     .then(() => next())
     .catch(err => next(err))
