@@ -413,7 +413,7 @@ export default class MessengerModule extends React.Component {
 
     const connectButton = (
        <Button className={style.messengerButton} onClick={this.handleConnection}>
-         {this.state.initialStateHash === getStateHash() ? ' Save & Connect' : ' Connect'}
+         {this.state.initialStateHash === this.getStateHash() ? ' Save & Connect' : ' Connect'}
        </Button>
      )
 
