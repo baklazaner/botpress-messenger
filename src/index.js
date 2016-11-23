@@ -2,7 +2,7 @@ const path = require('path')
 const fs = require('fs')
 const LRU = require('lru-cache')
 const _ = require('lodash')
-const uuid = require('node-uuid')
+const uuid = require('uuid')
 
 const Messenger = require('./messenger')
 const actions = require('./actions')
