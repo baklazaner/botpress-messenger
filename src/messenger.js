@@ -126,15 +126,15 @@ class Messenger extends EventEmitter {
       },
       message
     })
-      .then((json) => {
-        if (typeof onDelivery === 'function') {
-          this.once('delivery', onDelivery)
-        }
-        if (typeof onRead === 'function') {
-          this.once('read', onRead)
-        }
-        return json
-      })
+    .then((json) => {
+      if (typeof onDelivery === 'function') {
+        this.once('delivery', onDelivery)
+      }
+      if (typeof onRead === 'function') {
+        this.once('read', onRead)
+      }
+      return json
+    })
 
     if (options && options.typing) {
       const autoTimeout = (message && message.text) ? 500 + message.text.length * 10 : 1000
@@ -367,21 +367,26 @@ class Messenger extends EventEmitter {
   }
 
   _handleMessageEvent(event) {
-    if (this._handleConversationResponse('message', event)) { return }
     const text = event.message.text
     let captured = false
     if (!text) { return }
 
     this._handleEvent('message', event, { captured })
+
+    if (event.message && this.config.automaticallyMarkAsRead) {
+      this.sendAction(event.sender.id, 'mark_seen')
+    }
   }
 
   _handleAttachmentEvent(event) {
-    if (this._handleConversationResponse('attachment', event)) { return }
     this._handleEvent('attachment', event)
+
+    if (event.message && this.config.automaticallyMarkAsRead) {
+      this.sendAction(event.sender.id, 'mark_seen')
+    }
   }
 
   _handlePostbackEvent(event) {
-    if (this._handleConversationResponse('postback', event)) { return }
     const payload = event.postback.payload
     if (payload) {
       this._handleEvent(`postback:${payload}`, event)
@@ -390,17 +395,15 @@ class Messenger extends EventEmitter {
   }
 
   _handleQuickReplyEvent(event) {
-    if (this._handleConversationResponse('quick_reply', event)) { return }
     const payload = event.message.quick_reply && event.message.quick_reply.payload
     if (payload) {
       this._handleEvent(`quick_reply:${payload}`, event)
     }
     this._handleEvent('quick_reply', event)
-  }
 
-  _handleConversationResponse() {
-    let captured = false
-    return captured
+    if (event.message && this.config.automaticallyMarkAsRead) {
+      this.sendAction(event.sender.id, 'mark_seen')
+    }
   }
 
   _handleFacebookResponse(res) {
