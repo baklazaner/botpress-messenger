@@ -190,5 +190,11 @@ module.exports = {
         res.status(500).send({ message: err.message })
       })
     })
+
+    bp.getRouter('botpress-messenger')
+    .get('/homepage', (req, res) => {
+      const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json')))
+      res.send({ homepage: packageJSON.homepage })
+    })
   }
 }

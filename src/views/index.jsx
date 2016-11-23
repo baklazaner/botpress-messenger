@@ -62,6 +62,13 @@ export default class MessengerModule extends React.Component {
         this.setState({ initialStateHash: this.getStateHash() })
       })
     })
+
+    this.getAxios().get('/api/botpress-messenger/homepage')
+    .then((res) => {
+      this.setState({
+        homepage: res.data.homepage
+      })
+    })
   }
 
   getStateHash() {
@@ -221,6 +228,7 @@ export default class MessengerModule extends React.Component {
   }
 
   renderLabel(label, link) {
+
     return (
       <Col componentClass={ControlLabel} sm={3}>
         {label} <small>(<a target="_blank" href={this.state.homepage+link}>?</a>)</small>
