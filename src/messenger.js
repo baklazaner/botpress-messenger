@@ -30,7 +30,7 @@ class Messenger extends EventEmitter {
 
     this.app = bp.getRouter('botpress-messenger', {
       'bodyParser.json': false,
-      'auth': req => !/\/webhook$/i.test(req.originalUrl)
+      'auth': req => !/\/webhook/i.test(req.originalUrl)
     })
 
     this.app.use(bodyParser.json({
