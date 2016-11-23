@@ -187,7 +187,7 @@ module.exports = {
         res.send(json)
       })
       .catch((err) => {
-        res.status(500).send({message:err.message})
+        res.status(500).send({ message: err.message })
       })
     })
   }

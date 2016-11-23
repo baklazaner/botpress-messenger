@@ -12,7 +12,8 @@ import {
   Glyphicon,
   ListGroup,
   ListGroupItem,
-  InputGroup
+  InputGroup,
+  Alert
 } from 'react-bootstrap'
 import _ from 'lodash'
 import Promise from 'bluebird'
@@ -24,7 +25,12 @@ export default class MessengerModule extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = {loading:true}
+    this.state = {
+      loading:true,
+      message: null,
+      error: null,
+      initialStateHash: null
+    }
 
     this.handleChange = this.handleChange.bind(this)
     this.handleChangeCheckBox = this.handleChangeCheckBox.bind(this)
@@ -37,6 +43,7 @@ export default class MessengerModule extends React.Component {
     this.renderPersistentMenuItem = this.renderPersistentMenuItem.bind(this)
     this.renderDomainElement = this.renderDomainElement.bind(this)
     this.handleChangeNGrokCheckBox = this.handleChangeNGrokCheckBox.bind(this)
+    this.handleDismissError = this.handleDismissError.bind(this)
   }
 
   getAxios() {
@@ -50,24 +57,53 @@ export default class MessengerModule extends React.Component {
         loading: false,
         ...res.data
       })
+
+      setImmediate(() => {
+        this.setState({ initialStateHash: this.getStateHash() })
+      })
     })
+  }
+
+  getStateHash() {
+    const hashingStateItems = [
+      'accessToken',
+      'appSecret',
+      'applicationID',
+      'automaticallyMarkAsRead',
+      'displayGetStarted',
+      'greetingMessage',
+      'hostname',
+      'ngrok',
+      'persistentMenu',
+      'persistentMenuItems',
+      'trustedDomains'
+    ]
+
+    return hashingStateItems.map((i) => {
+      return this.state[i]
+    }).join(' ')
   }
 
   handleSaveChanges() {
     this.setState({ loading:true })
 
-    return this.getAxios().post('/api/botpress-messenger/config', _.omit(this.state, 'loading'))
+    return this.getAxios().post('/api/botpress-messenger/config', _.omit(this.state, 'loading', 'initialStateHash'))
     .then(() => {
       this.setState({
-        message: 'success',
-        loading: false,
-        error: null
+        message: {
+          type: 'success',
+          text: 'Your configuration have been saved correctly.'
+        },
+        loading: false
       })
     })
     .catch((err) => {
       this.setState({
-        loading: false,
-        error: err.response.data.message
+        message: {
+          type: 'danger',
+          text: 'An error occured during you were trying to save configuration: ' + err.response.data.message
+        },
+        loading: false
       })
     })
   }
@@ -80,7 +116,9 @@ export default class MessengerModule extends React.Component {
       this.setState({ validated: false })
     }
 
-    this.setState({ message:'warning', [name]: value })
+    this.setState({
+      [name]: value
+    })
   }
 
   handleValidation() {
@@ -91,15 +129,15 @@ export default class MessengerModule extends React.Component {
     .then(() => {
       this.setState({validated: true})
     })
-    .catch((res) => {
-      this.setState({ error: res.data.message, loading: false })
+    .catch(err => {
+      this.setState({ error: err.response.data.message, loading: false })
     })
   }
 
   handleConnection(event) {
     let preConnection = Promise.resolve()
-
-    if (this.state.message === 'warning') {
+    console.log(this.state.initialStateHash, this.getStateHash())
+    if (this.state.initialStateHash !== this.getStateHash()) {
       preConnection = this.handleSaveChanges()
     }
 
@@ -114,14 +152,13 @@ export default class MessengerModule extends React.Component {
         this.setState({ connected: !this.state.connected })
         window.setTimeout(::this.handleSaveChanges, 100)
       })
-      .catch((res) => {
-        this.setState({ error: res.data.message, loading: false })
+      .catch(err => {
+        this.setState({ error: err.response.data.message, loading: false })
       })
     })
   }
 
   handleChangeCheckBox(event) {
-    this.setState({message:'warning'})
     var { name } = event.target
     this.setState({[name]: !this.state[name]})
   }
@@ -136,18 +173,17 @@ export default class MessengerModule extends React.Component {
 
     this.setState({
       validated: false,
-      message: 'warning',
       ngrok: !this.state.ngrok
     })
   }
 
   handleRemoveFromList(value, name) {
-    this.setState({message:'warning'})
-    this.setState({[name]: _.without(this.state[name], value)})
+    this.setState({
+      [name]: _.without(this.state[name], value)
+    })
   }
 
   handleAddToTrustedDomainsList() {
-    this.setState({message:'warning'})
     const input = ReactDOM.findDOMNode(this.trustedDomainInput)
     if (input && input.value !== '') {
       this.setState({
@@ -158,7 +194,6 @@ export default class MessengerModule extends React.Component {
   }
 
   handleAddToPersistentMenuList() {
-    this.setState({message:'warning'})
 
     const type = ReactDOM.findDOMNode(this.newPersistentMenuType)
     const title = ReactDOM.findDOMNode(this.newPersistentMenuTitle)
@@ -180,6 +215,10 @@ export default class MessengerModule extends React.Component {
     type.selected = 'postback'
     title.value = ''
     value.value = ''
+  }
+
+  handleDismissError() {
+    this.setState({ error: null })
   }
 
   renderLabel(label, link) {
@@ -354,12 +393,6 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderErrorMessage() {
-    return <p className={style.errorMessage}>
-      {this.state.error}
-    </p>
-  }
-
   renderConnectionValidation() {
     const validatedText = <ControlLabel>All your connection settings are valid.</ControlLabel>
     const button = <Button className={style.messengerButton} onClick={this.handleValidation}>Validate</Button>
@@ -381,7 +414,7 @@ export default class MessengerModule extends React.Component {
 
     const connectButton = (
        <Button className={style.messengerButton} onClick={this.handleConnection}>
-         {this.state.message === 'warning' ? ' Save & Connect' : ' Connect'}
+         {this.state.initialStateHash === getStateHash() ? ' Save & Connect' : ' Connect'}
        </Button>
      )
 
@@ -404,7 +437,6 @@ export default class MessengerModule extends React.Component {
   renderForm() {
     return (
       <Form horizontal>
-        {this.state.error && this.renderErrorMessage()}
         <div className={style.section}>
           {this.renderHeader('Connexion')}
           <div>
@@ -439,27 +471,38 @@ export default class MessengerModule extends React.Component {
     )
   }
 
-  renderMessagePanel() {
-    let style = 'info'
-    let text = ''
-    if (this.state.message && this.state.message === 'success') {
-      style = 'success'
-      text += 'New settings have been updated successfully'
-    } else if (this.state.message && this.state.message === 'warning') {
-      style = 'warning'
-      text += 'You have unsaved changes'
-    } else if (this.state.error) {
-      style = 'danger'
-      text += 'Error updating settings'
-    }
+  renderUnsavedAlert() {
+    console.log(this.state.initialStateHash, this.getStateHash())
+    return (this.state.initialStateHash && this.state.initialStateHash !== this.getStateHash())
+      ? <Alert bsStyle='warning'>Be careful, you have unsaved changes in your configuration...</Alert>
+      : null
+  }
 
-    return <Panel bsStyle={style}>{text}</Panel>
+  renderMessageAlert() {
+    return this.state.message
+      ? <Alert bsStyle={this.state.message.type}>{this.state.message.text}</Alert>
+      : null
+  }
+
+  renderErrorAlert() {
+    return (
+      <Alert bsStyle="danger" onDismiss={this.handleDismissError}>
+        <h4>An error occured during communication with Facebook</h4>
+        <p>Details: {this.state.error}</p>
+      </Alert>
+    )
+  }
+
+  renderAllContent() {
+    return <div>
+      {this.state.error ? this.renderErrorAlert() : null}
+      {this.renderUnsavedAlert()}
+      {this.renderMessageAlert()}
+      {this.renderForm()}
+    </div>
   }
 
   render() {
-    return <div>
-      {this.renderMessagePanel()}
-      {this.state.loading ? null : this.renderForm()}
-    </div>
+    return this.state.loading ? null : this.renderAllContent()
   }
 }
