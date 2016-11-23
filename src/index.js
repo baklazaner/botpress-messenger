@@ -95,6 +95,29 @@ module.exports = {
       maxAge: 60 * 60 * 1000
     })
 
+    // regenerate a new ngrok url and update it to facebook
+    if (config.ngrok && config.connected) {
+      bp.logger.debug('[messenger] updating ngrok to facebook')
+      ngrok.getUrl()
+      .then(url => {
+        messenger.setConfig({ hostname: url.replace(/https:\/\//i, '') })
+        saveConfigToFile(messenger.getConfig(), file)
+        return messenger.updateSettings()
+        .then(() => messenger.connect())
+      })
+      .then(() => bp.notif({
+        level: 'info',
+        message: 'Upgraded messenger app webhook with new ngrok url'
+      }))
+      .catch(err => {
+        bp.logger.error('[messenger] error updating ngrok', err)
+        bp.notif({
+          level: 'error',
+          message: 'Error updating app webhook with new ngrok url. Please see logs for details.'
+        })
+      })
+    }
+
     messenger.on('message', function(payload) {
       const userId = payload.sender.id
       const mid = payload.message.mid

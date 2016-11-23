@@ -54,7 +54,7 @@ export default class MessengerModule extends React.Component {
   }
 
   handleSaveChanges() {
-    this.setState({loading:true})
+    this.setState({ loading:true })
 
     return this.getAxios().post('/api/botpress-messenger/config', _.omit(this.state, 'loading'))
     .then(() => {
@@ -112,7 +112,7 @@ export default class MessengerModule extends React.Component {
       })
       .then(() => {
         this.setState({ connected: !this.state.connected })
-        window.setImmediate(() => this.handleSaveChanges(event))
+        window.setTimeout(::this.handleSaveChanges, 100)
       })
       .catch((res) => {
         this.setState({ error: res.data.message, loading: false })
