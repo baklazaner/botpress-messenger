@@ -41,7 +41,7 @@ class Messenger extends EventEmitter {
   }
 
   setConfig(config) {
-    this.config = config
+    this.config = Object.assign({}, config)
   }
 
   getConfig() {
