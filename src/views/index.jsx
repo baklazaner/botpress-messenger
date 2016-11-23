@@ -136,7 +136,6 @@ export default class MessengerModule extends React.Component {
 
   handleConnection(event) {
     let preConnection = Promise.resolve()
-    console.log(this.state.initialStateHash, this.getStateHash())
     if (this.state.initialStateHash !== this.getStateHash()) {
       preConnection = this.handleSaveChanges()
     }
@@ -472,7 +471,6 @@ export default class MessengerModule extends React.Component {
   }
 
   renderUnsavedAlert() {
-    console.log(this.state.initialStateHash, this.getStateHash())
     return (this.state.initialStateHash && this.state.initialStateHash !== this.getStateHash())
       ? <Alert bsStyle='warning'>Be careful, you have unsaved changes in your configuration...</Alert>
       : null
