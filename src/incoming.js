@@ -63,4 +63,12 @@ module.exports = (bp, messenger) => {
     bp.logger.warn('[messenger] NOT IMPLEMENTED, account_link')
   })
 
+  messenger.on('optin', () => {
+    bp.logger.warn('[messenger] NOT IMPLEMENTED, optin')
+  })
+
+  messenger.on('referral', () => {
+    bp.logger.warn('[messenger] NOT IMPLEMENTED, referral')
+  })
+
 }

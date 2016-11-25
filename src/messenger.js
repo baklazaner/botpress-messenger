@@ -362,16 +362,15 @@ class Messenger extends EventEmitter {
     })
   }
 
-  _handleEvent(type, event, data) {
-    this.emit(type, event, data)
+  _handleEvent(type, event) {
+    this.emit(type, event)
   }
 
   _handleMessageEvent(event) {
     const text = event.message.text
-    let captured = false
     if (!text) { return }
 
-    this._handleEvent('message', event, { captured })
+    this._handleEvent('message', event)
 
     if (event.message && this.config.automaticallyMarkAsRead) {
       this.sendAction(event.sender.id, 'mark_seen')
@@ -470,6 +469,10 @@ class Messenger extends EventEmitter {
             this._handleEvent('read', event)
           } else if (event.account_linking) {
             this._handleEvent('account_linking', event)
+          } else if (event.optin) {
+            this._handleEvent('optin', event)
+          } else if (event.referral) {
+            this._handleEvent('referral', event)
           } else {
             console.log('Webhook received unknown event: ', event)
           }
@@ -535,7 +538,14 @@ class Messenger extends EventEmitter {
         object: 'page',
         callback_url: 'https://' + this.config.hostname + '/api/botpress-messenger/webhook',
         verify_token: this.config.verifyToken,
-        fields: ['message_deliveries', 'message_reads', 'messages', 'messaging_optins', 'messaging_postbacks']
+        fields: [
+          'message_deliveries',
+          'message_reads',
+          'messages',
+          'messaging_optins',
+          'messaging_postbacks',
+          'messaging_referral'
+        ]
       })
     }))
     .then(this._handleFacebookResponse)
