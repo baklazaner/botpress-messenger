@@ -452,9 +452,7 @@ class Messenger extends EventEmitter {
           if (event.message && event.message.is_echo && !this.config.broadcastEchoes) {
             return
           }
-          if (event.optin) {
-            this._handleEvent('authentication', event)
-          } else if (event.message && event.message.text) {
+          if (event.message && event.message.text) {
             this._handleMessageEvent(event)
             if (event.message.quick_reply) {
               this._handleQuickReplyEvent(event)
