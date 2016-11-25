@@ -94,7 +94,7 @@ export default class MessengerModule extends React.Component {
   handleSaveChanges() {
     this.setState({ loading:true })
 
-    return this.getAxios().post('/api/botpress-messenger/config', _.omit(this.state, 'loading', 'initialStateHash'))
+    return this.getAxios().post('/api/botpress-messenger/config', _.omit(this.state, 'loading', 'initialStateHash', 'message'))
     .then(() => {
       this.setState({
         message: {
