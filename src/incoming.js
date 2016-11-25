@@ -1,5 +1,6 @@
-const LRU = require('lru-cache')
-const Users = require('./users')
+import LRU from 'lru-cache'
+import Users from './users'
+import Promise from 'bluebird'
 
 module.exports = (bp, messenger) => {
 
@@ -10,27 +11,31 @@ module.exports = (bp, messenger) => {
     maxAge: 60 * 60 * 1000
   })
 
-  messenger.on('message', function(payload) {
+  const preprocessEvent = payload => {
     const userId = payload.sender.id
     const mid = payload.message.mid
 
     if (messagesCache.has(mid)) {
       // We already processed this message
-      return
+      return Promise.resolve(null)
     } else {
       // Mark it as processed
       messagesCache.set(mid, true)
     }
 
-    users.getOrFetchUserProfile(userId)
+    return users.getOrFetchUserProfile(userId)
+  }
+
+  messenger.on('message', e => {
+    preprocessEvent(e)
     .then(profile => {
       // push the message to the incoming middleware
       bp.incoming({
         platform: 'facebook',
         type: 'message',
         user: profile,
-        text: payload.message.text,
-        raw: payload
+        text: e.message.text,
+        raw: e
       })
     })
   })

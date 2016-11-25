@@ -544,7 +544,7 @@ class Messenger extends EventEmitter {
           'messages',
           'messaging_optins',
           'messaging_postbacks',
-          'messaging_referral'
+          'messaging_referrals'
         ]
       })
     }))
