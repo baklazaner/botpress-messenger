@@ -1,12 +1,12 @@
 const path = require('path')
 const fs = require('fs')
-const LRU = require('lru-cache')
 const _ = require('lodash')
 const uuid = require('uuid')
 
 const Messenger = require('./messenger')
 const actions = require('./actions')
 const outgoing = require('./outgoing')
+const incoming = require('./incoming')
 const ngrok = require('./ngrok')
 
 /**
@@ -88,13 +88,6 @@ module.exports = {
 
     messenger = new Messenger(bp, config)
 
-    const users = require('./users')(bp, messenger)
-
-    const messagesCache = LRU({
-      max: 10000,
-      maxAge: 60 * 60 * 1000
-    })
-
     // regenerate a new ngrok url and update it to facebook
     if (config.ngrok && config.connected) {
       bp.logger.debug('[messenger] updating ngrok to facebook')
@@ -118,30 +111,7 @@ module.exports = {
       })
     }
 
-    messenger.on('message', function(payload) {
-      const userId = payload.sender.id
-      const mid = payload.message.mid
-
-      if (messagesCache.has(mid)) {
-        // We already processed this message
-        return
-      } else {
-        // Mark it as processed
-        messagesCache.set(mid, true)
-      }
-
-      users.getOrFetchUserProfile(userId)
-      .then((profile) => {
-        // push the message to the incoming middleware
-        bp.incoming({
-          platform: 'facebook',
-          type: 'message', // TODO make this more specific
-          user: profile,
-          text: payload.message.text, // TODO make this more specific
-          raw: payload
-        })
-      })
-    })
+    incoming(bp, messenger)
 
     bp.getRouter('botpress-messenger')
     .get('/config', (req, res) => {
