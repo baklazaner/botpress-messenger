@@ -35,6 +35,32 @@ module.exports = (bp, messenger) => {
     })
   })
 
-  
+  messenger.on('attachment', () => {
+    bp.logger.warn('[messenger] NOT IMPLEMENTED, Attachment')
+  })
+
+  messenger.on('postback', () => {
+    bp.logger.warn('[messenger] NOT IMPLEMENTED, postback')
+  })
+
+  messenger.on('quick_reply', () => {
+    bp.logger.warn('[messenger] NOT IMPLEMENTED, quick_reply')
+  })
+
+  messenger.on('authentication', () => {
+    bp.logger.warn('[messenger] NOT IMPLEMENTED, AUTH')
+  })
+
+  messenger.on('delivery', () => {
+    bp.logger.warn('[messenger] NOT IMPLEMENTED, delivery')
+  })
+
+  messenger.on('read', () => {
+    bp.logger.warn('[messenger] NOT IMPLEMENTED, read')
+  })
+
+  messenger.on('account_linking', () => {
+    bp.logger.warn('[messenger] NOT IMPLEMENTED, account_link')
+  })
 
 }
