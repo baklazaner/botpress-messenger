@@ -1,7 +1,9 @@
 # botpress-messenger
 
 Official Facebook Messenger connector for Botpress. This module has been build to accelerate and facilitate development of Messenger's bots.
+
 ## Installation
+
 By using CLI, users only need to type this command in their terminal to add messenger module to their bot.
 
 `botpress install messenger`
@@ -17,21 +19,24 @@ To setup this module, users need to fill connexion settings directly in UI.
 ![Connexion settings](/assets/connexion-settings.png)
 
 1. Create a **Facebook page** \([link](https://www.facebook.com/pages/create)\) and a **Facebook application** \([link](https://developers.facebook.com)\)
-![Create app](/assets/create-app-facebook.png)
+  ![Create app](/assets/create-app-facebook.png)
 
-2. Get **App ID** and **App Secret** on dashboard of developers page [](#applicationid) [](#appsecret)
-![App id and app secret](/assets/app-id-app-secret.png)
+2. Get **App ID** and **App Secret** on dashboard of developers page
 
-3. Get **Access token** on Messenger section of developers [](#accesstoken)
-![Access token](/assets/access-token.png)
-4. Setup **Hostname** [](#hostname)
-    
-    4.1. Users need to manually enter their hostname or use **ngrok** to locally deploy their bot \([learn more about ngrok](https://ngrok.com)\). [](#ngrok)
-    
-    4.2. Users don't have to setup webhook on developers page, this module automatically setup it via Facebook API.
+  ![App id and app secret](/assets/app-id-app-secret.png)
 
-5. **Validate** and **Connect**! [](#validation)
-To see in details how to configure completly this module, videos are available on our Youtube Channel (soon).
+3. Get **Access token** on Messenger section of developers 
+  ![Access token](/assets/access-token.png)
+
+4. Setup **Hostname**
+
+  4.1. Users need to manually enter their hostname or use **ngrok** to locally deploy their bot \([learn more about ngrok](https://ngrok.com)\).
+
+  4.2. Users don't have to setup webhook on developers page, this module automatically setup it via Facebook API.
+
+5. **Validate** and **Connect**! 
+  To see in details how to configure completly this module, videos are available on our Youtube Channel \(soon\).
+
 
 ## Features
 
@@ -69,29 +74,32 @@ To see in details how to configure completly this module, videos are available o
 
 #### Automatic typing indicator
 
-#### Display Get Started [](#displaygetstarted])
+#### Display Get Started
 
-To active get started button on Messenger, users can modify display setting directly in user interface ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button)\).
+To active get started button on Messenger, users can modify display setting directly in user interface \([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button)\).
 
 ![Get started button](/assets/get-started-button.png)
 
-#### Greeting message [](#greetingmessage)
+#### Greeting message
 
 Directly in module view, users are able to modify greeting message \([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text)\).
 ![Greeting message](/assets/greeting-message.png)
-#### Persistent menu [](#persistentmenu)
+
+#### Persistent menu
+
 Users can directly modify persistent menu in module user interface. By using UI, it's possible to add, modify and remove items \([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu)\).
 
 ![Persistent menu](/assets/persistant-menu.png)
 
-#### Automatically mark as read [](#automaticallymarkasread)
+#### Automatically mark as read
 
-Directly in UI, users can setup if they want to automatically mark all messages as read ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-read)).
+Directly in UI, users can setup if they want to automatically mark all messages as read \([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-read)\).
 
 ![](/assets/mark-as-read.png)
 
-#### Trusted domains [](#trusteddomains)
-By using UI, users can configure \(add, modify and remove\) trusted domains ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/domain-whitelisting)\).
+#### Trusted domains
+
+By using UI, users can configure \(add, modify and remove\) trusted domains \([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/domain-whitelisting)\).
 ![Trusted domains](/assets/trusted-domains.png)
 
 #### Automatic profile lookup
@@ -99,12 +107,14 @@ By using UI, users can configure \(add, modify and remove\) trusted domains ([fa
 #### Save users in Database
 
 #### Webhook security check
+
 ## Example
 
-* Botpress examples (soon).
-* Youtube Channel (soon).
+* Botpress examples \(soon\).
+* Youtube Channel \(soon\).
 
 ### Community
+
 ### License
 
 botpress-messenger is licensed under AGPL-3.0
