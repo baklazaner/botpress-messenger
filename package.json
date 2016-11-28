@@ -1,0 +1,64 @@
+{
+  "name": "botpress-messenger",
+  "version": "1.0.5",
+  "description": "Official Facebook Messenger connector for botpress",
+  "main": "bin/node.bundle.js",
+  "homepage": "https://github.com/botpress/botpress-messenger",
+  "botpress": {
+    "menuText": "Messenger",
+    "menuIcon": "message",
+    "webBundle": "bin/web.bundle.js"
+  },
+  "keywords": [
+    "messenger",
+    "facebook",
+    "botpress"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "node webpack.js --watch",
+    "compile": "node webpack.js --compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/botpress/botpress-messenger"
+  },
+  "author": "Protorisk DIFC",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "body-parser": "^1.15.2",
+    "eventemitter2": "^2.1.3",
+    "lodash": "^4.16.6",
+    "lru-cache": "^4.0.1",
+    "ngrok": "^2.2.3",
+    "node-fetch": "^1.6.3",
+    "uuid": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.7",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-object-rest-spread": "^6.16.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "babel-register": "^6.18.0",
+    "classnames": "^2.2.5",
+    "copy-webpack-plugin": "^4.0.0",
+    "css-loader": "^0.25.0",
+    "eslint": "^3.10.2",
+    "eslint-plugin-react": "^6.7.1",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "file-loader": "^0.9.0",
+    "json-loader": "^0.5.4",
+    "node-sass": "^3.11.2",
+    "react": "^15.3.2",
+    "react-bootstrap": "^0.30.6",
+    "react-dom": "^15.3.2",
+    "sass-loader": "^4.0.2",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.3",
+    "webpack-node-externals": "^1.5.4"
+  }
+}
