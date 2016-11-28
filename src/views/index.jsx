@@ -281,7 +281,7 @@ export default class MessengerModule extends React.Component {
   renderNGrokCheckbox(props) {
     return (
       <FormGroup>
-        {this.renderLabel('Use ngrok', '#hgrok')}
+        {this.renderLabel('Use ngrok', '#ngrok')}
         <Col sm={7}>
           <Checkbox name='ngrok' {...props} checked={this.state.ngrok}
             onChange={this.handleChangeNGrokCheckBox} />
