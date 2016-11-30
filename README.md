@@ -12,7 +12,9 @@ botpress install messenger
 
 It's also possible to install it with Botpress UI in modules section.
 
-  <img alt='Connexion settings' src='/assets/install-messenger-module.png' width='500px' />
+<div align="center">
+    <img alt='Connexion settings' src='/assets/install-messenger-module.png' width='500px' />
+</div>
 
 ## Get started
 
