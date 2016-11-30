@@ -26,7 +26,7 @@ To setup connexion of your chatbot to Messenger, you need to fill connexion sett
 
 2. Get **App ID** and **App Secret** on dashboard of developers page and copy them in module interface.
 
-    <img alt='App id' src='/assets/app-id-app-secret.png' width='350px' />
+    <img alt='App id' src='/assets/app-id-app-secret.png' width='400px' />
 
 3. Get **Access token** in Messenger section of developers and copy it in the appropriate section.
 
@@ -209,30 +209,30 @@ const options = { typing: true }
 
 To active get started button on Messenger, users can modify display setting directly in user interface ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button)).
 
-   <img alt='Get started button' src='/assets/get-started-button.png' width='500px' />
+   <img alt='Get started button' src='/assets/get-started-button.png' width='600px' />
 
 #### Greeting message
 
 Directly in module view, users are able to modify greeting message ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text)).
 
-   <img alt='Greeting message' src='/assets/greeting-message.png' width='500px' />
+   <img alt='Greeting message' src='/assets/greeting-message.png' width='600px' />
 
 #### Persistent menu
 
 Users can directly modify persistent menu in module user interface. By using UI, it's possible to add, modify and remove items \([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu)\).
 
-   <img alt='Persistent menu' src='/assets/persistant-menu.png' width='500px' />
+   <img alt='Persistent menu' src='/assets/persistant-menu.png' width='600px' />
 
 #### Automatically mark as read
 
 Directly in UI, users can setup if they want to automatically mark all messages as read ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-read)).
 
-   <img alt='Mark as read' src='/assets/mark-as-read.png' width='500px' />
+   <img alt='Mark as read' src='/assets/mark-as-read.png' width='600px' />
 
 #### Trusted domains
 
 By using UI, users can configure \(add, modify and remove\) trusted domains ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/domain-whitelisting)).
-<img alt='Trusted domains' src='/assets/trusted-domains.png' width='500px'/>
+<img alt='Trusted domains' src='/assets/trusted-domains.png' width='600px'/>
 
 #### Automatic profile lookup
 
