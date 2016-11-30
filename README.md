@@ -206,12 +206,14 @@ Users can directly modify persistent menu in module user interface. By using UI,
 
 Directly in UI, users can setup if they want to automatically mark all messages as read ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-read)).
 
+<div align="center">
 <img alt='Mark as read' src='/assets/mark-as-read.png' width='500px' />
+</div>
 
 #### Trusted domains
 
 By using UI, users can configure \(add, modify and remove\) trusted domains ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/domain-whitelisting)).
-<img alt='Trusted domains' src='/assets/trusted-domains.png' width='500px' style='border=solid 1px black;' />
+<img alt='Trusted domains' src='/assets/trusted-domains.png' width='500px'/>
 
 #### Automatic profile lookup
 
