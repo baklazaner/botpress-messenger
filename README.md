@@ -18,14 +18,17 @@ To setup this module, users need to fill connexion settings directly in UI.
 
 ![Connexion settings](/assets/connexion-settings.png)
 
-1. Create a **Facebook page** \([link](https://www.facebook.com/pages/create)\) and a **Facebook application** \([link](https://developers.facebook.com)\)
-  ![Create app](/assets/create-app-facebook.png)
+1. Create a **Facebook page** \([link]
+(https://www.facebook.com/pages/create)\) and a **Facebook application** \([link](https://developers.facebook.com)\)
+  
+    ![Create app](/assets/create-app-facebook.png)
 
 2. Get **App ID** and **App Secret** on dashboard of developers page
 
   ![App id and app secret](/assets/app-id-app-secret.png)
 
 3. Get **Access token** on Messenger section of developers 
+
   ![Access token](/assets/access-token.png)
 
 4. Setup **Hostname**
@@ -58,7 +61,26 @@ To setup this module, users need to fill connexion settings directly in UI.
 
 ## Reference
 
-#### Messages
+#### Text
+
+pipeText()
+
+`
+bp.messenger.pipeText(
+    userId,
+    text,
+    [options]
+)
+`
+
+Pipe `text` to Messenger for a specific `userId`. 
+* where text (required) is 'TEXT'
+* where options (optional) is '{}'
+
+
+
+
+
 
 #### Buttons
 
