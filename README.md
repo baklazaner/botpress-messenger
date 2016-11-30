@@ -65,13 +65,12 @@ To setup this module, users need to fill connexion settings directly in UI.
 
 pipeText()
 
-`
-bp.messenger.pipeText(
-    userId,
+```
+bp.messenger.pipeText(userId,
     text,
     [options]
-)
-`
+)}
+```
 
 Pipe `text` to Messenger for a specific `userId`. 
 * where text (required) is 'TEXT'
