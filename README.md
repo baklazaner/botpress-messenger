@@ -12,17 +12,13 @@ botpress install messenger
 
 It's also possible to install it with Botpress UI in modules section.
 
-<div align="center">
 <img alt='Connexion settings' src='/assets/install-messenger-module.png' width='500px' />
-</div>
 
 ## Get started
 
 To setup connexion of your chatbot to Messenger, you need to fill connexion settings directly in module interface. In fact, you only need to follow these 5 steps and your bot will be active.
 
-<div align="center">
 <img alt='Connexion settings' src='assets/connexion-settings.png' width='700px'/>
-</div>
 
 1. Create a [**Facebook page**](https://www.facebook.com/pages/create) and a [**Messenger application**](https://developers.facebook.com).
   
@@ -213,41 +209,33 @@ const options = { typing: true }
 
 To active get started button on Messenger, users can modify display setting directly in user interface ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button)).
 
-<div align='center'>
-   <img alt='Get started button' src='/assets/get-started-button.png' width='600px' />
-</div>
+<img alt='Get started button' src='/assets/display-get-started.png' width='600px' />
+
 
 #### Greeting message
 
 Directly in module view, users are able to modify greeting message ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text)).
 
-<div align='center'>
-   <img alt='Greeting message' src='/assets/greeting-message.png' width='600px' />
-</div>
+
+<img alt='Greeting message' src='/assets/greeting-message.png' width='600px' />
 
 #### Persistent menu
 
 Users can directly modify persistent menu in module user interface. By using UI, it's possible to add, modify and remove items \([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu)\).
 
-<div align='center'>
-   <img alt='Persistent menu' src='/assets/persistant-menu.png' width='600px' />
-</div>
+<img alt='Persistent menu' src='/assets/persistent-menu.png' width='600px' />
 
 #### Automatically mark as read
 
 Directly in UI, users can setup if they want to automatically mark all messages as read ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-read)).
 
-<div align='center'>
-    <img alt='Mark as read' src='/assets/mark-as-read.png' width='600px' />
-</div>
+<img alt='Mark as read' src='/assets/automatically-mark-as-read.png' width='600px' />
 
 #### Trusted domains
 
 By using UI, users can configure \(add, modify and remove\) trusted domains ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/domain-whitelisting)).
 
-<div align='center'>
-    <img alt='Trusted domains' src='/assets/trusted-domains.png' width='600px'/>
-</div>
+<img alt='Trusted domains' src='/assets/trusted-domains.png' width='600px'/>
 
 #### Automatic profile lookup
 
