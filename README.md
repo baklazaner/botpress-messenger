@@ -6,7 +6,9 @@ Official Facebook Messenger connector for Botpress. This module has been build t
 
 Installing modules on Botpress is simple. By using CLI, users only need to type this command in their terminal to add messenger module to their bot.
 
-`botpress install messenger`
+``` 
+botpress install messenger
+```
 
 It's also possible to install it with Botpress UI in modules section.
 
@@ -14,9 +16,9 @@ It's also possible to install it with Botpress UI in modules section.
 
 ## Get started
 
-To setup connect your chatbot to Messenger, you need to fill connexion settings directly in module interface. In fact, you only need to follow these 5 steps and your bot will be active.
+To setup connexion of your chatbot to Messenger, you need to fill connexion settings directly in module interface. In fact, you only need to follow these 5 steps and your bot will be active.
 
-<img alt='Connexion settings' src='assets/connexion-settings.png' width='500px' />
+<img alt='Connexion settings' src='assets/connexion-settings.png' width='700px' />
 
 1. Create a [**Facebook page**](https://www.facebook.com/pages/create) and a [**Messenger application**](https://developers.facebook.com).
   
@@ -24,7 +26,7 @@ To setup connect your chatbot to Messenger, you need to fill connexion settings 
 
 2. Get **App ID** and **App Secret** on dashboard of developers page and copy them in module interface.
 
-    <img alt='App id' src='/assets/app-id-app-secret.png' width='500px' />
+    <img alt='App id' src='/assets/app-id-app-secret.png' width='350px' />
 
 3. Get **Access token** in Messenger section of developers and copy it in the appropriate section.
 
@@ -46,11 +48,10 @@ To see in details how to configure completly this module, videos are available o
 * [Text messages](#text-messages)
 * [Attachments](#attachments)
 * [Templates](#templates)
-* [Postbacks](#postbacks)
-* [Referrals](#referrals)
-* Delivery and read receipts
 * [Quick replies](#quick-replies)
 * [Automatic typing indicator](#automatic-typing-indicator)
+* [Postbacks](#postbacks)
+* [Referrals](#referrals)
 * [Display Get Started](#display-get-started)
 * [Greeting message](#greeting-message)
 * [Persistent menu](#persistent-menu)
@@ -65,7 +66,7 @@ To see in details how to configure completly this module, videos are available o
 
 ### Text messages
 
-In your code, it is simple to send a message text to a specific users ([doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message)).
+In code, it is simple to send a message text to a specific users ([facebook doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message)).
 
 #### sendText(userId, text, [options])
 
@@ -107,7 +108,7 @@ bp.messenger.pipeText(userId, text, options)
 
 ### Attachments
 
-By using this function, you can send any type of attachment to your users ([doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes)).
+By using this function, you can send any type of attachment to your users ([facebook doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes)).
 
 #### sendAttachment(userId, type, url, [options])
 
@@ -137,7 +138,7 @@ bp.messenger.sendAttachment(userId, type, url)
 
 ### Templates
 
-By using this module, it's easy to send any type of supported template to your users ([doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/templates)).
+By using this module, it's easy to send any type of supported template to your users ([facebook doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/templates)).
 
 #### sendTemplate(userId, payload, [options])
 
@@ -172,18 +173,7 @@ const payload = {
 bp.messenger.sendTemplate(userId, payload)
 ```
 
-#### Postbacks
-
-//TODO This module support postbacks. Postbacks occur when a Postback button, Get Started button, Persistent menu or Structured Message is tapped ([doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback)).
-
-#### Referrals
-
-//TODO This module also support referrals. In fact, the value of the `ref` parameter is passed by the server via webhook and we are able to access these referrals in parameters of input messages ([doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/referral)). 
-
-#### Delivery and read receipts
-
 #### Quick replies
-
 By using `options` argument, you can easily add quick replies to text messages or attachments. 
 
 ```
@@ -196,7 +186,6 @@ const options = {
         }
     ]
 }
-
 ``` 
 
 #### Automatic typing indicator
@@ -206,6 +195,15 @@ As quick replies, you can add an automatic typing indicator to your messages by 
 ```
 const options = { typing: true }
 ```
+
+
+#### Postbacks
+
+//TODO This module support postbacks. Postbacks occur when a Postback button, Get Started button, Persistent menu or Structured Message is tapped ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback)).
+
+#### Referrals
+
+//TODO This module also support referrals. In fact, the value of the `ref` parameter is passed by the server via webhook and we are able to access these referrals in parameters of input messages ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/referral)). 
 
 #### Display Get Started
 
