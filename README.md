@@ -43,29 +43,33 @@ To see in details how to configure completly this module, videos are available o
 
 ## Features
 
-* Messages
-* Buttons
-* Templates
-* Referrals
-* Postbacks
+* [Text messages](#text-messages)
+* [Attachments](#attachments)
+* [Templates](#templates)
+* [Postbacks](#postbacks)
+* [Referrals](#referrals)
 * Delivery and read receipts
-* Quick replies
-* Automatic typing indicator
-* Persistent menu
-* Getting started button
-* Getting started text
-* Trusted domains
+* [Quick replies](#quick-replies)
+* [Automatic typing indicator](#automatic-typing-indicator)
+* [Display Get Started](#display-get-started)
+* [Greeting message](#greeting-message)
+* [Persistent menu](#persistent-menu)
+* [Automatically mark as read](#automatically-mark-as-read)
+* [Trusted domains](#trusted-domains)
+* 
 * Save users in DB
 * Automatic profile lookup
 * Webhook security check
 
 ## Reference
 
-### sendText(userId, text, [options])
+### Text messages
 
 In your code, it is simple to send a message text to a specific users ([doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message)).
 
-#### Arguments
+#### sendText(userId, text, [options])
+
+##### Arguments
 
 1. ` userId ` (_String_): Correspond to unique Messenger's recipient identifier. Usually, this `recipient_id` is available from input message.
 
@@ -73,11 +77,11 @@ In your code, it is simple to send a message text to a specific users ([doc](htt
 
 3. ` options ` (_Object_): An object that may contains `quick_replies` or `typing` indicator. These specific options will be added to the associated message. 
 
-#### Returns
+##### Returns
 
 (_Void_): Send to outgoing middlewares a formatted `Object` than contains all information (platform, type, text, raw) about the text message that needs to be sent to Messenger platform.
 
-#### Example
+##### Example
 
 ```
 const userId = 'USER_ID' //TODO
@@ -85,27 +89,29 @@ const text = "Select between these two options?"
 const options = {
     quick_replies: [
         {
-            "content_type":"text",
-            "title":"Option 1",
-            "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_OPTION_1"
+            content_type: "text",
+            title: "Option 1",
+            payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_OPTION_1"
         },
         {
-            "content_type":"text",
-            "title":"Option 2",
-            "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_OPTION_2"
+            content_type:"text",
+            title:"Option 2",
+            payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_OPTION_2"
         }
     ],
-    typing : true
+    typing: true
 }
 
 bp.messenger.pipeText(userId, text, options)
 ```
 
-### sendAttachment(userId, type, url, [options])
+### Attachments
 
 By using this function, you can send any type of attachment to your users ([doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes)).
 
-#### Arguments
+#### sendAttachment(userId, type, url, [options])
+
+##### Arguments
 
 1. ` userId ` (_String_): Correspond to unique Messenger's recipient identifier
 
@@ -115,12 +121,11 @@ By using this function, you can send any type of attachment to your users ([doc]
 
 4. ` options ` (_Object_): An object that may contains `quick_replies` or `typing` indicator. These specific options will be added to the associated attachment. 
 
-#### Returns
+##### Returns
 
 (_Void_): Send to outgoing middlewares a formatted `Object` than contains all information (platform, type, text, raw) about the attachment that needs to be sent to Messenger platform.
 
-
-#### Example
+##### Example
 
 ```
 const userId = 'USER_ID' //TODO
@@ -130,11 +135,13 @@ const url = 'https://github.com/botpress/botpress/blob/master/images/botpress-da
 bp.messenger.sendAttachment(userId, type, url)
 ```
 
-### sendTemplate(userId, payload, [options])
+### Templates
 
 By using this module, it's easy to send any type of supported template to your users ([doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/templates)).
 
-#### Arguments
+#### sendTemplate(userId, payload, [options])
+
+##### Arguments
 
 1. ` userId ` (_String_): Correspond to unique Messenger's recipient identifier
 
@@ -142,11 +149,11 @@ By using this module, it's easy to send any type of supported template to your u
 
 3. ` options ` (_Object_): An object that may contains `typing` indicator. It's not possible to add `quick_replies` to a template.
 
-#### Returns
+##### Returns
 
 (_Void_): Send to outgoing middlewares a formatted `Object` than contains all information (platform, type, text, raw) about the template that needs to be sent.
 
-#### Example
+##### Example
 
 ```
 const userId = 'USER_ID' //TODO
@@ -165,40 +172,64 @@ const payload = {
 bp.messenger.sendTemplate(userId, payload)
 ```
 
+#### Postbacks
+
+//TODO This module support postbacks. Postbacks occur when a Postback button, Get Started button, Persistent menu or Structured Message is tapped ([doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback)).
 
 #### Referrals
 
-#### Postbacks
+//TODO This module also support referrals. In fact, the value of the `ref` parameter is passed by the server via webhook and we are able to access these referrals in parameters of input messages ([doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/referral)). 
 
 #### Delivery and read receipts
 
 #### Quick replies
 
+By using `options` argument, you can easily add quick replies to text messages or attachments. 
+
+```
+const options = {
+    quick_replies: [
+        {
+            content_type :"text",
+            title: "Option",
+            payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_OPTION"
+        }
+    ]
+}
+
+``` 
+
 #### Automatic typing indicator
+
+As quick replies, you can add an automatic typing indicator to your messages by adding `typing` to `options` argument.
+
+```
+const options = { typing: true }
+```
 
 #### Display Get Started
 
 To active get started button on Messenger, users can modify display setting directly in user interface ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button)).
 
-<img alt='Get started button' src='/assets/get-started-button.png' width='500px' />
+   <img alt='Get started button' src='/assets/get-started-button.png' width='500px' />
 
 #### Greeting message
 
 Directly in module view, users are able to modify greeting message ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text)).
 
-<img alt='Greeting message' src='/assets/greeting-message.png' width='500px' />
+   <img alt='Greeting message' src='/assets/greeting-message.png' width='500px' />
 
 #### Persistent menu
 
 Users can directly modify persistent menu in module user interface. By using UI, it's possible to add, modify and remove items \([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu)\).
 
-<img alt='Persistent menu' src='/assets/persistant-menu.png' width='500px' />
+   <img alt='Persistent menu' src='/assets/persistant-menu.png' width='500px' />
 
 #### Automatically mark as read
 
 Directly in UI, users can setup if they want to automatically mark all messages as read ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-read)).
 
-<img alt='Mark as read' src='/assets/mark-as-read.png' width='500px' />
+   <img alt='Mark as read' src='/assets/mark-as-read.png' width='500px' />
 
 #### Trusted domains
 
