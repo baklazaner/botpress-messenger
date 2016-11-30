@@ -13,14 +13,16 @@ botpress install messenger
 It's also possible to install it with Botpress UI in modules section.
 
 <div align="center">
-    <img alt='Connexion settings' src='/assets/install-messenger-module.png' width='500px' />
+<img alt='Connexion settings' src='/assets/install-messenger-module.png' width='500px' />
 </div>
 
 ## Get started
 
 To setup connexion of your chatbot to Messenger, you need to fill connexion settings directly in module interface. In fact, you only need to follow these 5 steps and your bot will be active.
 
+<div align="center">
 <img alt='Connexion settings' src='assets/connexion-settings.png' width='700px' />
+</div>
 
 1. Create a [**Facebook page**](https://www.facebook.com/pages/create) and a [**Messenger application**](https://developers.facebook.com).
   
