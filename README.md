@@ -29,7 +29,7 @@ To setup this module, users need to fill connexion settings directly in UI.
 
 3. Get **Access token** on Messenger section of developers 
 
-<img src='/assets/access-token.png)' width=100px;/>
+<img alt='Acces token' src='/assets/access-token.png' width='100px;' />
 
 4. Setup **Hostname**
 
