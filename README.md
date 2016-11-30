@@ -211,7 +211,7 @@ Directly in UI, users can setup if they want to automatically mark all messages 
 #### Trusted domains
 
 By using UI, users can configure \(add, modify and remove\) trusted domains ([facebook doc](https://developers.facebook.com/docs/messenger-platform/thread-settings/domain-whitelisting)).
-<img alt='Trusted domains' src='/assets/trusted-domains.png' width='500px' />
+<img alt='Trusted domains' src='/assets/trusted-domains.png' width='500px' style='border=solid 1px black;' />
 
 #### Automatic profile lookup
 
