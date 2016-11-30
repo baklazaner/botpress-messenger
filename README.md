@@ -10,7 +10,7 @@ By using CLI, users only need to type this command in their terminal to add mess
 
 By using Botpress UI, it's also possible to easily install it.
 
-![Install modules](/assets/install-messenger-module.png)
+  <img alt='Connexion settings' src='/assets/install-messenger-module.png' width='500px' />
 
 ## Get started
 
@@ -21,15 +21,15 @@ To setup this module, users need to fill connexion settings directly in UI.
 1. Create a **Facebook page** \([link]
 (https://www.facebook.com/pages/create)\) and a **Facebook application** \([link](https://developers.facebook.com)\)
   
-    ![Create app](/assets/create-app-facebook.png)
+    <img alt='Create app' src='/assets/create-app-facebook.png' width='500px' />
 
 2. Get **App ID** and **App Secret** on dashboard of developers page
 
-  ![App id and app secret](/assets/app-id-app-secret.png)
+    <img alt='App id' src='/assets/app-id-app-secret.png' width='500px' />
 
 3. Get **Access token** on Messenger section of developers 
 
-<img alt='Acces token' src='/assets/access-token.png' width='500px;' />
+    <img alt='Acces token' src='/assets/access-token.png' width='500px;' />
 
 4. Setup **Hostname**
 
