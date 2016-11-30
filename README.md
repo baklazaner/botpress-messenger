@@ -166,14 +166,6 @@ bp.messenger.sendTemplate(userId, payload)
 ```
 
 
-
-
-
-
-
-
-
-
 #### Referrals
 
 #### Postbacks
@@ -206,9 +198,7 @@ Users can directly modify persistent menu in module user interface. By using UI,
 
 Directly in UI, users can setup if they want to automatically mark all messages as read ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-read)).
 
-<div align="center">
 <img alt='Mark as read' src='/assets/mark-as-read.png' width='500px' />
-</div>
 
 #### Trusted domains
 
