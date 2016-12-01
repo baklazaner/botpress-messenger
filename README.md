@@ -325,6 +325,8 @@ The following properties are available: first_name, last_name, locale, gender, t
  
 #### Save users in Database
 
+Users are automatically persisted in the built-in botpress database using the built-in `bp.db.saveUser` function.
+
 #### Webhook security check
 
 ## Example
