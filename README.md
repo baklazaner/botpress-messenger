@@ -329,6 +329,8 @@ Users are automatically persisted in the built-in botpress database using the bu
 
 #### Webhook security check
 
+botpress-messenger verifies that requests really come from Facebook's servers by validating requests hash.
+
 ## Example
 
 * Botpress examples \(soon\).
