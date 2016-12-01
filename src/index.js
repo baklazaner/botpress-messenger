@@ -77,8 +77,8 @@ module.exports = {
 
     bp.messenger = {}
     _.forIn(actions, (action, name) => {
-      var pipeName = name.replace(/^create/, 'pipe')
-      bp.messenger[pipeName] = function() {
+      var sendName = name.replace(/^create/, 'send')
+      bp.messenger[sendName] = function() {
         var msg = action.apply(this, arguments)
         bp.middlewares.sendOutgoing(msg)
       }
