@@ -138,7 +138,51 @@ bp.hear('hello')
 
 #### Postbacks
 
+```
+{
+  platform: 'facebook',
+  type: 'postback',
+  user: profile,
+  text: 'PAYLOAD_NAME',
+  raw: e
+}
+```
+
+#### Attachments
+
+```
+{
+  platform: 'facebook',
+  type: 'attachments',
+  user: profile,
+  text: 'URL',
+  raw: e
+}
+```
+
 #### Referrals
+
+```
+{
+  platform: 'facebook',
+  type: 'referral',
+  user: profile,
+  text: 'REF',
+  raw: e
+}
+```
+
+#### Quick Replies
+
+```
+{
+  platform: 'facebook',
+  type: 'quick_reply',
+  user: profile,
+  text: 'QUICK_REPLY_NAME',
+  raw: e
+}
+```
 
 ### Outgoing
 
