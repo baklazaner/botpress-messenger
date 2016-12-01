@@ -44,6 +44,7 @@ export default class MessengerModule extends React.Component {
     this.renderDomainElement = this.renderDomainElement.bind(this)
     this.handleChangeNGrokCheckBox = this.handleChangeNGrokCheckBox.bind(this)
     this.handleDismissError = this.handleDismissError.bind(this)
+    this.renderGetStartedMessage = this.renderGetStartedMessage.bind(this)
   }
 
   getAxios() {
@@ -101,7 +102,8 @@ export default class MessengerModule extends React.Component {
           type: 'success',
           text: 'Your configuration have been saved correctly.'
         },
-        loading: false
+        loading: false,
+        initialStateHash: this.getStateHash()
       })
     })
     .catch((err) => {
@@ -110,7 +112,8 @@ export default class MessengerModule extends React.Component {
           type: 'danger',
           text: 'An error occured during you were trying to save configuration: ' + err.response.data.message
         },
-        loading: false
+        loading: false,
+        initialStateHash: this.getStateHash()
       })
     })
   }
@@ -143,7 +146,8 @@ export default class MessengerModule extends React.Component {
 
   handleConnection(event) {
     let preConnection = Promise.resolve()
-    if (this.state.initialStateHash !== this.getStateHash()) {
+
+    if (this.state.initialStateHash && this.state.initialStateHash !== this.getStateHash()) {
       preConnection = this.handleSaveChanges()
     }
 
@@ -245,6 +249,13 @@ export default class MessengerModule extends React.Component {
         </Col>
       </FormGroup>
     )
+  }
+
+  renderGetStartedMessage() {
+    return <div>
+      {this.renderCheckBox('Auto respond to GET_STARTED postback', 'autoRespondGetStarted', this.state.homepage+'#display-get-started')}
+      {this.state.autoRespondGetStarted && this.renderTextAreaInput('Auto response', 'autoResponse', this.state.homepage+'#greeting-message')}
+    </div>
   }
 
   renderHostnameTextInput(props) {
@@ -420,7 +431,10 @@ export default class MessengerModule extends React.Component {
 
     const connectButton = (
        <Button className={style.messengerButton} onClick={this.handleConnection}>
-         {this.state.initialStateHash === this.getStateHash() ? ' Save & Connect' : ' Connect'}
+         {this.state.initialStateHash && this.state.initialStateHash !== this.getStateHash()
+            ? 'Save & Connect'
+            : 'Connect'
+          }
        </Button>
      )
 
@@ -460,7 +474,8 @@ export default class MessengerModule extends React.Component {
           {this.renderHeader('General')}
           <div>
             {this.renderCheckBox('Display Get Started', 'displayGetStarted', this.state.homepage+'#display-get-started')}
-            {this.renderTextAreaInput('Greating message', 'greetingMessage', this.state.homepage+'#greeting-message')}
+            {this.state.displayGetStarted && this.renderGetStartedMessage()}
+            {this.renderTextAreaInput('Greeting text', 'greetingMessage', this.state.homepage+'#greeting-message')}
             {this.renderCheckBox('Persistent menu', 'persistentMenu', this.state.homepage+'#persistent-menu')}
             {this.state.persistentMenu && this.renderPersistentMenuList()}
             {this.renderCheckBox('Automatically mark as read', 'automaticallyMarkAsRead', this.state.homepage+'#automatically-mark-as-read')}

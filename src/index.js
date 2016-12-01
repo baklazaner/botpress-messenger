@@ -35,7 +35,9 @@ const loadConfigFromFile = (file) => {
       persistentMenu : false,
       persistentMenuItems : [],
       automaticallyMarkAsRead : true,
-      trustedDomains : []
+      trustedDomains : [],
+      autoRespondGetStarted: true,
+      autoResponse: 'Hello!'
     }
     saveConfigToFile(config,file)
   }
