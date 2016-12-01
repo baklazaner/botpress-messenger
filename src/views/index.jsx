@@ -101,7 +101,8 @@ export default class MessengerModule extends React.Component {
           type: 'success',
           text: 'Your configuration have been saved correctly.'
         },
-        loading: false
+        loading: false,
+        initialStateHash: this.getStateHash()
       })
     })
     .catch((err) => {
@@ -110,7 +111,8 @@ export default class MessengerModule extends React.Component {
           type: 'danger',
           text: 'An error occured during you were trying to save configuration: ' + err.response.data.message
         },
-        loading: false
+        loading: false,
+        initialStateHash: this.getStateHash()
       })
     })
   }
