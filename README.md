@@ -155,7 +155,7 @@ bp.hear('hello')
   platform: 'facebook',
   type: 'attachments',
   user: profile,
-  text: 'URL',
+  text: e.message.attachments,
   raw: e
 }
 ```
