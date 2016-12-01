@@ -81,7 +81,7 @@ To see in details how to configure completly this module, videos are available o
 
 You can listen to incoming event easily with Botpress by using `bp` built-in `hear` function. You only need to listen to specific Messenger event to be able to react to user's actions.
 
-```
+```js
 bp.hear({ platform: 'facebook', type: 'postback', text: 'GET_STARTED' }, (event, next) => {
       bp.messenger.pipeText(event.user.id, 'Welcome on Botpress!!!')
    }
@@ -90,7 +90,7 @@ bp.hear({ platform: 'facebook', type: 'postback', text: 'GET_STARTED' }, (event,
 
 In fact, this module preprocesses almost all types of message (message, attachment, postback, quick_reply, delivery, read, optin, referrals...) and send them to incoming middlewares. When you build a bot or a module, you can access to all information about incoming messages that have been send to  middlewares.
 
-```
+```js
 bp.middlewares.sendIncoming({
    platform: 'facebook',
    type: 'message',
@@ -104,7 +104,7 @@ bp.middlewares.sendIncoming({
 
 You can acces to all user's profile information by using this module. A cache have been implemented to fetch all information about users and this information is sent to middlewares.
 
-```
+```js
 {
   id: profile.id,
   platform: 'facebook',
@@ -120,7 +120,7 @@ You can acces to all user's profile information by using this module. A cache ha
 
 An `event` is sent to middlewares for each incoming text message from Messenger platform with all specific information.
 
-```
+```js
 {
   platform: 'facebook',
   type: 'message',
@@ -138,7 +138,7 @@ bp.hear('hello')
 
 #### Postbacks
 
-```
+```js
 {
   platform: 'facebook',
   type: 'postback',
@@ -150,7 +150,7 @@ bp.hear('hello')
 
 #### Attachments
 
-```
+```js
 {
   platform: 'facebook',
   type: 'attachments',
@@ -162,24 +162,60 @@ bp.hear('hello')
 
 #### Referrals
 
-```
+```js
 {
   platform: 'facebook',
   type: 'referral',
   user: profile,
-  text: 'REF',
+  text: e.referral.ref,
   raw: e
 }
 ```
 
 #### Quick Replies
 
-```
+```js
 {
   platform: 'facebook',
   type: 'quick_reply',
   user: profile,
-  text: 'QUICK_REPLY_NAME',
+  text: e.message.quick_reply.payload,
+  raw: e
+}
+```
+
+#### Optins
+
+```js
+{
+  platform: 'facebook',
+  type: 'optin',
+  user: profile,
+  text: e.optin.ref,
+  raw: e
+}
+```
+
+#### Delivery
+
+```js
+{
+  platform: 'facebook',
+  type: 'delivery',
+  user: profile,
+  text: e.delivery.watermark,
+  raw: e
+}
+```
+
+#### Read
+
+```js
+{
+  platform: 'facebook',
+  type: 'read',
+  user: profile,
+  text: e.read.watermark,
   raw: e
 }
 ```
@@ -208,7 +244,7 @@ In code, it is simple to send a message text to a specific users ([facebook doc]
 
 ##### Example
 
-```
+```js
 const userId = 'USER_ID' //TODO
 const text = "Select between these two options?"
 const options = {
@@ -252,7 +288,7 @@ By using this function, you can send any type of attachment to your users ([face
 
 ##### Example
 
-```
+```js
 const userId = 'USER_ID' //TODO
 const type = 'image'
 const url = 'https://github.com/botpress/botpress/blob/master/images/botpress-dark.png?raw=true'
@@ -280,7 +316,7 @@ By using this module, it's easy to send any type of supported template to your u
 
 ##### Example
 
-```
+```js
 const userId = 'USER_ID' //TODO
 const payload = {
     template_type: "button",
@@ -300,7 +336,7 @@ bp.messenger.sendTemplate(userId, payload)
 #### Quick replies
 By using `options` argument, you can easily add quick replies to text messages or attachments. 
 
-```
+```js
 const options = {
     quick_replies: [
         {
@@ -316,7 +352,7 @@ const options = {
 
 As quick replies, you can add an automatic typing indicator to your messages by adding `typing` to `options` argument.
 
-```
+```js
 const options = { typing: true }
 ```
 
