@@ -228,10 +228,9 @@ export default class MessengerModule extends React.Component {
   }
 
   renderLabel(label, link) {
-
     return (
       <Col componentClass={ControlLabel} sm={3}>
-        {label} <small>(<a target="_blank" href={this.state.homepage+link}>?</a>)</small>
+        {label} <small>(<a target="_blank" href={link}>?</a>)</small>
       </Col>
     )
   }
@@ -264,7 +263,7 @@ export default class MessengerModule extends React.Component {
 
     return (
       <FormGroup validationState={getValidationState()}>
-        {this.renderLabel('Hostname', '#hostname')}
+        {this.renderLabel('Hostname', this.state.homepage+'#4-setup-hostname')}
         <Col sm={7}>
           <InputGroup>
             <InputGroup.Addon>{prefix}</InputGroup.Addon>
@@ -281,7 +280,7 @@ export default class MessengerModule extends React.Component {
   renderNGrokCheckbox(props) {
     return (
       <FormGroup>
-        {this.renderLabel('Use ngrok', '#ngrok')}
+        {this.renderLabel('Use ngrok', 'https://ngrok.com/')}
         <Col sm={7}>
           <Checkbox name='ngrok' {...props} checked={this.state.ngrok}
             onChange={this.handleChangeNGrokCheckBox} />
@@ -331,7 +330,7 @@ export default class MessengerModule extends React.Component {
     return (
       <div>
         <FormGroup>
-          {this.renderLabel('Trusted Domains', '#trusteddomains')}
+          {this.renderLabel('Trusted Domains', this.state.homepage+'#trusted-domains')}
           <Col sm={7}>
             <ControlLabel>Current trusted domains:</ControlLabel>
             <ListGroup>
@@ -405,7 +404,7 @@ export default class MessengerModule extends React.Component {
     const button = <Button className={style.messengerButton} onClick={this.handleValidation}>Validate</Button>
 
     return <FormGroup>
-        {this.renderLabel('Validation', '#validation')}
+        {this.renderLabel('Validation', this.state.homepage+'#5-validate-and-connect')}
         <Col sm={7}>
           {this.state.validated ? validatedText : button}
         </Col>
@@ -447,9 +446,9 @@ export default class MessengerModule extends React.Component {
         <div className={style.section}>
           {this.renderHeader('Connexion')}
           <div>
-            {this.renderTextInput('Application ID', 'applicationID', '#applicationid', { disabled: this.state.connected })}
-            {this.renderTextAreaInput('Access Token', 'accessToken', '#accesstoken', { disabled: this.state.connected })}
-            {this.renderTextInput('App Secret', 'appSecret', '#appsecret', { disabled: this.state.connected })}
+            {this.renderTextInput('Application ID', 'applicationID', this.state.homepage+'#2-get-app-id-and-app-secret', { disabled: this.state.connected })}
+            {this.renderTextAreaInput('Access Token', 'accessToken', this.state.homepage+'#3-get-access-token', { disabled: this.state.connected })}
+            {this.renderTextInput('App Secret', 'appSecret', this.state.homepage+'#2-get-app-id-and-app-secret', { disabled: this.state.connected })}
             {this.renderHostnameTextInput({ disabled: (this.state.ngrok || this.state.connected) })}
             {this.renderNGrokCheckbox( {disabled: this.state.connected} )}
             {this.renderConnectionValidation()}
@@ -460,11 +459,11 @@ export default class MessengerModule extends React.Component {
         <div className={style.section}>
           {this.renderHeader('General')}
           <div>
-            {this.renderCheckBox('Display Get Started', 'displayGetStarted', '#displaygetstarted')}
-            {this.renderTextAreaInput('Greating message', 'greetingMessage', '#greetingmessage')}
-            {this.renderCheckBox('Persistent menu', 'persistentMenu', '#persistantmenu')}
+            {this.renderCheckBox('Display Get Started', 'displayGetStarted', this.state.homepage+'#display-get-started')}
+            {this.renderTextAreaInput('Greating message', 'greetingMessage', this.state.homepage+'#greeting-message')}
+            {this.renderCheckBox('Persistent menu', 'persistentMenu', this.state.homepage+'#persistent-menu')}
             {this.state.persistentMenu && this.renderPersistentMenuList()}
-            {this.renderCheckBox('Automatically mark as read', 'automaticallyMarkAsRead', '#automaticallymarkasread')}
+            {this.renderCheckBox('Automatically mark as read', 'automaticallyMarkAsRead', this.state.homepage+'#automatically-mark-as-read')}
           </div>
         </div>
 
