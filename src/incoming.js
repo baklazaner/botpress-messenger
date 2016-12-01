@@ -30,7 +30,7 @@ module.exports = (bp, messenger) => {
     preprocessEvent(e)
     .then(profile => {
       // push the message to the incoming middleware
-      bp.incoming({
+      bp.middlewares.sendIncoming({
         platform: 'facebook',
         type: 'message',
         user: profile,
@@ -44,7 +44,7 @@ module.exports = (bp, messenger) => {
     preprocessEvent(e)
     .then(profile => {
 
-      bp.incoming({
+      bp.middlewares.sendIncoming({
         platform: 'facebook',
         type: 'attachments',
         user: profile,
@@ -57,7 +57,7 @@ module.exports = (bp, messenger) => {
   messenger.on('postback', e => {
     preprocessEvent(e)
     .then(profile => {
-      bp.incoming({
+      bp.middlewares.sendIncoming({
         platform: 'facebook',
         type: 'postback',
         user: profile,
@@ -70,7 +70,7 @@ module.exports = (bp, messenger) => {
   messenger.on('quick_reply', e => {
     preprocessEvent(e)
     .then(profile => {
-      bp.incoming({
+      bp.middlewares.sendIncoming({
         platform: 'facebook',
         type: 'quick_reply',
         user: profile,
@@ -83,7 +83,7 @@ module.exports = (bp, messenger) => {
   messenger.on('delivery', e => {
     preprocessEvent(e)
     .then(profile => {
-      bp.incoming({
+      bp.middlewares.sendIncoming({
         platform: 'facebook',
         type: 'delivery',
         user: profile,
@@ -96,7 +96,7 @@ module.exports = (bp, messenger) => {
   messenger.on('read', e => {
     preprocessEvent(e)
     .then(profile => {
-      bp.incoming({
+      bp.middlewares.sendIncoming({
         platform: 'facebook',
         type: 'read',
         user: profile,
@@ -113,7 +113,7 @@ module.exports = (bp, messenger) => {
   messenger.on('optin', e => {
     preprocessEvent(e)
     .then(profile => {
-      bp.incoming({
+      bp.middlewares.sendIncoming({
         platform: 'facebook',
         type: 'optin',
         user: profile,
@@ -126,7 +126,7 @@ module.exports = (bp, messenger) => {
   messenger.on('referral', e => {
     preprocessEvent(e)
     .then(profile => {
-      bp.incoming({
+      bp.middlewares.sendIncoming({
         platform: 'facebook',
         type: 'referral',
         user: profile,
