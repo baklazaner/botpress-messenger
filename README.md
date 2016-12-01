@@ -76,6 +76,8 @@ To see in details how to configure completly this module, videos are available o
 
 ### Incoming
 
+
+
 #### Text messages
 
 #### Postbacks
@@ -84,7 +86,8 @@ To see in details how to configure completly this module, videos are available o
 
 ### Outgoing
 
-Bu
+This module 
+
 ### Text messages
 
 In code, it is simple to send a message text to a specific users ([facebook doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message)).
