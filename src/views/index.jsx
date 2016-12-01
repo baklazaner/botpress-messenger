@@ -143,7 +143,8 @@ export default class MessengerModule extends React.Component {
 
   handleConnection(event) {
     let preConnection = Promise.resolve()
-    if (this.state.initialStateHash !== this.getStateHash()) {
+
+    if (this.state.initialStateHash && this.state.initialStateHash !== this.getStateHash()) {
       preConnection = this.handleSaveChanges()
     }
 
@@ -420,7 +421,10 @@ export default class MessengerModule extends React.Component {
 
     const connectButton = (
        <Button className={style.messengerButton} onClick={this.handleConnection}>
-         {this.state.initialStateHash === this.getStateHash() ? ' Save & Connect' : ' Connect'}
+         {this.state.initialStateHash && this.state.initialStateHash !== this.getStateHash()
+            ? 'Save & Connect'
+            : 'Connect'
+          }
        </Button>
      )
 
