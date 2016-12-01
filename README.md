@@ -1,6 +1,6 @@
 # botpress-messenger
 
-Official Facebook Messenger connector for Botpress. This module has been build to accelerate and facilitate development of Messenger's bots.
+Official Facebook Messenger connector module for [Botpress](http://github.com/botpress/botpress). This module has been build to accelerate and facilitate development of Messenger's bots.
 
 ## Installation
 
@@ -115,10 +115,19 @@ You can acces to all user's profile information by using this module. A cache ha
 
 #### Text messages
 
-```
+An `event` is sent to middlewares for each incoming text message from Messenger platform with all specific information.
 
 ```
+{
+  platform: 'facebook',
+  type: 'message',
+  user: profile,
+  text: e.message.text,
+  raw: e
+}
+```
 
+Then, you can listen easily to this `event` in your module or bot
 
 bp.hear('hello')
 ```
