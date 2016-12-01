@@ -321,7 +321,7 @@ By using UI, users can configure \(add, modify and remove\) trusted domains ([fa
 
 Profiles are automatically lookedup using Facebook Graph API. The profile of the user can be found in the incoming middleware events: `event.user`
 
-The following properties are available: first_name, last_name, locale, gender, timezone
+The following properties are available: first_name, last_name, locale, gender, timezone.
  
 #### Save users in Database
 
