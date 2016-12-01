@@ -71,7 +71,6 @@ To see in details how to configure completly this module, videos are available o
 * [Persistent menu](#persistent-menu)
 * [Automatically mark as read](#automatically-mark-as-read)
 * [Trusted domains](#trusted-domains)
-* 
 * Save users in DB
 * Automatic profile lookup
 * Webhook security check
