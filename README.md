@@ -79,21 +79,38 @@ To see in details how to configure completly this module, videos are available o
 You can listen to incoming event easily with Botpress by using `bp` built-in `hear` function. You only need to listen to specific Messenger event to be able to react to user's actions. 
 
 ```
-bp.hear({ type: 'postback', text: 'GET_STARTED' }, (event, next) => {
+bp.hear({ platform: 'facebook', type: 'postback', text: 'GET_STARTED' }, (event, next) => {
       bp.messenger.pipeText(event.user.id, 'Welcome on Botpress!!!')
    }
 })
 ```
 
-In fact, this module preprocesses all types of message and send them to incoming middlewares. You can access to all available information about incoming messages
+In fact, this module preprocesses almost all types of message (message, attachment, postback, quick_reply, delivery, read, optin, referrals...) and send them to incoming middlewares. When you build a bot or a module, you can access to all information about incoming messages that have been send to  middlewares.
 
 ```
-
+bp.middlewares.sendIncoming({
+   platform: 'facebook',
+   type: 'message',
+   user: profile,
+   text: e.message.text,
+   raw: e
+})
 ```
+
+#### Profile
+
+You can acces to all user's profile information by using this module. A cache have been implemented to fetch all information about users and this information is sent to middlewares.
+
+ 
 
 #### Text messages
 
-You can listen to simple text message  
+
+```
+
+
+bp.hear('hello')
+```
 
 #### Postbacks
 
