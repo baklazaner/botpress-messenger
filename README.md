@@ -76,7 +76,14 @@ To see in details how to configure completly this module, videos are available o
 
 ### Incoming
 
-You can listen to incoming event easily with Botpress. You only need to listen to Messenger event to react to your user's actions. 
+You can listen to incoming event easily with Botpress by using `bp` built-in `hear` function. You only need to listen to specific Messenger event to be able to react to user's actions. 
+
+```
+bp.hear({ type: 'postback', text: 'GET_STARTED' }, (event, next) => {
+      bp.messenger.pipeText(event.user.id, 'Welcome on Botpress!!!')
+   }
+})
+```
 
 
 #### Text messages
