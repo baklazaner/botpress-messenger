@@ -143,7 +143,7 @@ bp.hear('hello')
   platform: 'facebook',
   type: 'postback',
   user: profile,
-  text: 'PAYLOAD_NAME',
+  text: e.postback.payload,
   raw: e
 }
 ```
