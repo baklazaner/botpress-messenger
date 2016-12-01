@@ -20,25 +20,27 @@ To setup connexion of your chatbot to Messenger, you need to fill connexion sett
 
 <img alt='Connexion settings' src='assets/connexion-settings.png' width='700px'/>
 
-1. Create a [**Facebook page**](https://www.facebook.com/pages/create) and a [**Messenger application**](https://developers.facebook.com).
+##### 1. Create a [**Facebook page**](https://www.facebook.com/pages/create) and a [**Messenger application**](https://developers.facebook.com).
   
     <img alt='Create app' src='/assets/create-app-facebook.png' width='500px' />
 
-2. Get **App ID** and **App Secret** on dashboard of developers page and copy them in module interface.
+##### 2. Get App ID and App Secret
+These information are available on dashboard of developers page. You only need to copy them in module interface.
 
     <img alt='App id' src='/assets/app-id-app-secret.png' width='400px' />
 
-3. Get **Access token** in Messenger section of developers and copy it in the appropriate section.
+##### 3. Get Access token
+Acces token is available in Messenger section of developers. You need to copy it in the appropriate section of botpress-messenger UI.
 
     <img alt='Acces token' src='/assets/access-token.png' width='500px;' />
 
-4. Setup **Hostname**
+##### 4. Setup Hostname
 
-  4.1. You need to manually enter your hostname or you cans use [**ngrok**](https://ngrok.com) to locally deploy your chatbot.
+  4.1. You need to manually enter your hostname or you cans use **[ngrok](#ngrok)** to locally deploy your chatbot ([learn more about ngrok]((https://ngrok.com))
 
   4.2. You don't have to setup webhook on Facebook developers page, this module automatically do it for you via Facebook API.
 
-5. **Validate** and **Connect**! 
+##### 5. Validate and Connect! 
 
 To see in details how to configure completly this module, videos are available on our Youtube Channel \(soon\).
 
