@@ -1,16 +1,18 @@
 # botpress-messenger
 
-Official Facebook Messenger connector module for [Botpress](http://github.com/botpress/botpress). This module has been build to accelerate and facilitate development of Messenger's bots.
+Official Facebook Messenger connector module for [Botpress](http://github.com/botpress/botpress). 
+
+This module has been build to accelerate and facilitate development of Messenger bots.
 
 ## Installation
 
-Installing modules on Botpress is simple. By using CLI, users only need to type this command in their terminal to add messenger module to their bot.
+Installing modules on Botpress is simple. By using the CLI, you only need to type this command in your terminal to add the messenger module to your bot.
 
 ``` 
 botpress install messenger
 ```
 
-It's also possible to install it with Botpress UI in modules section.
+It's also possible to install it through the Botpress UI in the modules section.
 
 <img alt='Connexion settings' src='/assets/install-messenger-module.png' width='500px' />
 
