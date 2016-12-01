@@ -251,7 +251,7 @@ In code, it is simple to send a message text to a specific users ([facebook doc]
 ##### Example
 
 ```js
-const userId = 'USER_ID' //TODO
+const userId = 'USER_ID'
 const text = "Select between these two options?"
 const options = {
     quick_replies: [
@@ -295,7 +295,7 @@ By using this function, you can send any type of attachment to your users ([face
 ##### Example
 
 ```js
-const userId = 'USER_ID' //TODO
+const userId = 'USER_ID'
 const type = 'image'
 const url = 'https://github.com/botpress/botpress/blob/master/images/botpress-dark.png?raw=true'
 
@@ -323,7 +323,7 @@ By using this module, it's easy to send any type of supported template to your u
 ##### Example
 
 ```js
-const userId = 'USER_ID' //TODO
+const userId = 'USER_ID'
 const payload = {
     template_type: "button",
     text: "Have you seen our awesome website?",
