@@ -47,6 +47,14 @@ To see in details how to configure completly this module, videos are available o
 
 ## Features
 
+### Incoming
+
+* [Text messages](#text-messages) 
+* [Postbacks](#postbacks)
+* [Referrals](#referrals)
+
+### Outgoing
+
 * [Text messages](#text-messages)
 * [Attachments](#attachments)
 * [Templates](#templates)
@@ -66,6 +74,17 @@ To see in details how to configure completly this module, videos are available o
 
 ## Reference
 
+### Incoming
+
+#### Text messages
+
+#### Postbacks
+
+#### Referrals
+
+### Outgoing
+
+Bu
 ### Text messages
 
 In code, it is simple to send a message text to a specific users ([facebook doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message)).
