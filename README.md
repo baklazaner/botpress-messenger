@@ -85,8 +85,15 @@ bp.hear({ type: 'postback', text: 'GET_STARTED' }, (event, next) => {
 })
 ```
 
+In fact, this module preprocesses all types of message and send them to incoming middlewares. You can access to all available information about incoming messages
+
+```
+
+```
 
 #### Text messages
+
+You can listen to simple text message  
 
 #### Postbacks
 
