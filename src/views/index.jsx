@@ -44,6 +44,7 @@ export default class MessengerModule extends React.Component {
     this.renderDomainElement = this.renderDomainElement.bind(this)
     this.handleChangeNGrokCheckBox = this.handleChangeNGrokCheckBox.bind(this)
     this.handleDismissError = this.handleDismissError.bind(this)
+    this.renderGetStartedMessage = this.renderGetStartedMessage.bind(this)
   }
 
   getAxios() {
@@ -248,6 +249,13 @@ export default class MessengerModule extends React.Component {
         </Col>
       </FormGroup>
     )
+  }
+
+  renderGetStartedMessage() {
+    return <div>
+      {this.renderCheckBox('Auto respond to GET_STARTED postback', 'autoRespondGetStarted', this.state.homepage+'#display-get-started')}
+      {this.state.autoRespondGetStarted && this.renderTextAreaInput('Auto response', 'autoResponse', this.state.homepage+'#greeting-message')}
+    </div>
   }
 
   renderHostnameTextInput(props) {
@@ -466,7 +474,8 @@ export default class MessengerModule extends React.Component {
           {this.renderHeader('General')}
           <div>
             {this.renderCheckBox('Display Get Started', 'displayGetStarted', this.state.homepage+'#display-get-started')}
-            {this.renderTextAreaInput('Greating message', 'greetingMessage', this.state.homepage+'#greeting-message')}
+            {this.state.displayGetStarted && this.renderGetStartedMessage()}
+            {this.renderTextAreaInput('Greeting text', 'greetingMessage', this.state.homepage+'#greeting-message')}
             {this.renderCheckBox('Persistent menu', 'persistentMenu', this.state.homepage+'#persistent-menu')}
             {this.state.persistentMenu && this.renderPersistentMenuList()}
             {this.renderCheckBox('Automatically mark as read', 'automaticallyMarkAsRead', this.state.homepage+'#automatically-mark-as-read')}
