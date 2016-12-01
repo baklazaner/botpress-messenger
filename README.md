@@ -86,7 +86,7 @@ To see in details how to configure completly this module, videos are available o
 
 ### Outgoing
 
-This module 
+By using our module, you can send anything you want to your users on Messenger. In fact, we support all types of messenge that are available on Facebook (text, images, videos, audios, webviews...).
 
 ### Text messages
 
