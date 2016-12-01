@@ -87,7 +87,7 @@ module.exports = (bp, messenger) => {
         platform: 'facebook',
         type: 'delivery',
         user: profile,
-        text: e.delivery.watermark,
+        text: e.delivery.watermark.toString(),
         raw: e
       })
     })
@@ -100,7 +100,7 @@ module.exports = (bp, messenger) => {
         platform: 'facebook',
         type: 'read',
         user: profile,
-        text: e.read.watermark,
+        text: e.read.watermark.toString(),
         raw: e
       })
     })
