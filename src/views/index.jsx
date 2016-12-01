@@ -404,7 +404,7 @@ export default class MessengerModule extends React.Component {
     const button = <Button className={style.messengerButton} onClick={this.handleValidation}>Validate</Button>
 
     return <FormGroup>
-        {this.renderLabel('Validation', this.state.homepage+'#5-validation-and-connect')}
+        {this.renderLabel('Validation', this.state.homepage+'#5-validate-and-connect')}
         <Col sm={7}>
           {this.state.validated ? validatedText : button}
         </Col>
