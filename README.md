@@ -53,9 +53,15 @@ To see in details how to configure completly this module, videos are available o
 
 ### Incoming
 
+* [Profile](#profile)
 * [Text messages](#text-messages) 
 * [Postbacks](#postbacks)
+* [Attachments](#attachments)
 * [Referrals](#referrals)
+* [Quick replies](#quick-replies)
+* [Optins](#optins)
+* [Delivery](#delivery)
+* [Read](#read)
 
 ### Outgoing
 
@@ -71,9 +77,9 @@ To see in details how to configure completly this module, videos are available o
 * [Persistent menu](#persistent-menu)
 * [Automatically mark as read](#automatically-mark-as-read)
 * [Trusted domains](#trusted-domains)
-* Save users in DB
-* Automatic profile lookup
-* Webhook security check
+* [Save users in DB](#save-users-in-db)
+* [Automatic profile lookup](#automatic-profile-lookup)
+* [Webhook security check](#webhook-security-check)
 
 ## Reference
 
@@ -359,11 +365,11 @@ const options = { typing: true }
 
 #### Postbacks
 
-//TODO This module support postbacks. Postbacks occur when a Postback button, Get Started button, Persistent menu or Structured Message is tapped ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback)).
+This module support postbacks. Postbacks occur when a Postback button, Get Started button, Persistent menu or Structured Message is tapped ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback)).
 
 #### Referrals
 
-//TODO This module also support referrals. In fact, the value of the `ref` parameter is passed by the server via webhook and we are able to access these referrals in parameters of input messages ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/referral)). 
+This module also support referrals. In fact, the value of the `ref` parameter is passed by the server via webhook and we are able to access these referrals in parameters of input messages ([facebook doc](https://developers.facebook.com/docs/messenger-platform/webhook-reference/referral)). 
 
 #### Display Get Started
 
@@ -417,6 +423,8 @@ botpress-messenger verifies that requests really come from Facebook's servers by
 * Youtube Channel \(soon\).
 
 ### Community
+
+
 
 ### License
 
