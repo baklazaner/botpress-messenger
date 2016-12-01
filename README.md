@@ -101,10 +101,21 @@ bp.middlewares.sendIncoming({
 
 You can acces to all user's profile information by using this module. A cache have been implemented to fetch all information about users and this information is sent to middlewares.
 
- 
+```
+{
+  id: profile.id,
+  platform: 'facebook',
+  gender: profile.gender,
+  timezone: profile.timezone,
+  locale: profile.locale
+}
+```
+
+**Note**: All new users are automatically saved by this module in Botpress built-in database (`bp.db`). 
 
 #### Text messages
 
+```
 
 ```
 
