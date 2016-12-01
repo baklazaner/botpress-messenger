@@ -63,7 +63,7 @@ const outgoingMiddleware = (event, next) => {
 module.exports = {
   init: function(bp) {
 
-    bp.registerMiddleware({
+    bp.middlewares.register({
       name: 'messenger.sendMessages',
       type: 'outgoing',
       order: 100,
@@ -78,7 +78,7 @@ module.exports = {
       var pipeName = name.replace(/^create/, 'pipe')
       bp.messenger[pipeName] = function() {
         var msg = action.apply(this, arguments)
-        bp.outgoing(msg)
+        bp.middlewares.sendOutgoing(msg)
       }
     })
   },
@@ -98,13 +98,13 @@ module.exports = {
         return messenger.updateSettings()
         .then(() => messenger.connect())
       })
-      .then(() => bp.notif({
+      .then(() => bp.notifications.send({
         level: 'info',
         message: 'Upgraded messenger app webhook with new ngrok url'
       }))
       .catch(err => {
         bp.logger.error('[messenger] error updating ngrok', err)
-        bp.notif({
+        bp.notifications.send({
           level: 'error',
           message: 'Error updating app webhook with new ngrok url. Please see logs for details.'
         })
