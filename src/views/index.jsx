@@ -330,7 +330,7 @@ export default class MessengerModule extends React.Component {
     return (
       <div>
         <FormGroup>
-          {this.renderLabel('Trusted Domains', '#trusted-domains')}
+          {this.renderLabel('Trusted Domains', this.state.homepage+'#trusted-domains')}
           <Col sm={7}>
             <ControlLabel>Current trusted domains:</ControlLabel>
             <ListGroup>
@@ -404,7 +404,7 @@ export default class MessengerModule extends React.Component {
     const button = <Button className={style.messengerButton} onClick={this.handleValidation}>Validate</Button>
 
     return <FormGroup>
-        {this.renderLabel('Validation', '#validation')}
+        {this.renderLabel('Validation', this.state.homepage+'#5-validation-and-connect')}
         <Col sm={7}>
           {this.state.validated ? validatedText : button}
         </Col>
@@ -446,9 +446,9 @@ export default class MessengerModule extends React.Component {
         <div className={style.section}>
           {this.renderHeader('Connexion')}
           <div>
-            {this.renderTextInput('Application ID', 'applicationID', '#2-get-app-id-and-app-secret', { disabled: this.state.connected })}
-            {this.renderTextAreaInput('Access Token', 'accessToken', '#3-get-access-token', { disabled: this.state.connected })}
-            {this.renderTextInput('App Secret', 'appSecret', '#2-get-app-id-and-app-secret', { disabled: this.state.connected })}
+            {this.renderTextInput('Application ID', 'applicationID', this.state.homepage+'#2-get-app-id-and-app-secret', { disabled: this.state.connected })}
+            {this.renderTextAreaInput('Access Token', 'accessToken', this.state.homepage+'#3-get-access-token', { disabled: this.state.connected })}
+            {this.renderTextInput('App Secret', 'appSecret', this.state.homepage+'#2-get-app-id-and-app-secret', { disabled: this.state.connected })}
             {this.renderHostnameTextInput({ disabled: (this.state.ngrok || this.state.connected) })}
             {this.renderNGrokCheckbox( {disabled: this.state.connected} )}
             {this.renderConnectionValidation()}
@@ -459,11 +459,11 @@ export default class MessengerModule extends React.Component {
         <div className={style.section}>
           {this.renderHeader('General')}
           <div>
-            {this.renderCheckBox('Display Get Started', 'displayGetStarted', '#display-get-started')}
-            {this.renderTextAreaInput('Greating message', 'greetingMessage', '#greeting-message')}
-            {this.renderCheckBox('Persistent menu', 'persistentMenu', '#persistent-menu')}
+            {this.renderCheckBox('Display Get Started', 'displayGetStarted', this.state.homepage+'#display-get-started')}
+            {this.renderTextAreaInput('Greating message', 'greetingMessage', this.state.homepage+'#greeting-message')}
+            {this.renderCheckBox('Persistent menu', 'persistentMenu', this.state.homepage+'#persistent-menu')}
             {this.state.persistentMenu && this.renderPersistentMenuList()}
-            {this.renderCheckBox('Automatically mark as read', 'automaticallyMarkAsRead', '#automatically-mark-as-read')}
+            {this.renderCheckBox('Automatically mark as read', 'automaticallyMarkAsRead', this.state.homepage+'#automatically-mark-as-read')}
           </div>
         </div>
 
