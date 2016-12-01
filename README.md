@@ -32,7 +32,7 @@ To setup connexion of your chatbot to Messenger, you need to fill connexion sett
 
     <img alt='Acces token' src='/assets/access-token.png' width='500px;' />
 
-4. Setup **Hostname**
+4. Setup **Hostname** [](#hostname)
 
   4.1. You need to manually enter your hostname or you cans use [**ngrok**](https://ngrok.com) to locally deploy your chatbot.
 
