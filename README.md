@@ -132,6 +132,7 @@ An `event` is sent to middlewares for each incoming text message from Messenger 
 
 Then, you can listen easily to this `event` in your module or bot
 
+```js
 bp.hear('hello')
 ```
 
@@ -318,6 +319,10 @@ By using UI, users can configure \(add, modify and remove\) trusted domains ([fa
 
 #### Automatic profile lookup
 
+Profiles are automatically lookedup using Facebook Graph API. The profile of the user can be found in the incoming middleware events: `event.user`
+
+The following properties are available: first_name, last_name, locale, gender, timezone
+ 
 #### Save users in Database
 
 #### Webhook security check
