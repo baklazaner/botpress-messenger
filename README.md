@@ -424,7 +424,7 @@ botpress-messenger verifies that requests really come from Facebook's servers by
 
 ### Community
 
-
+There's a [public chatroom](http://www.gitter.im/botpress/core) where you are welcome to join and ask any question and even help others.
 
 ### License
 
