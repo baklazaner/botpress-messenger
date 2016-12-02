@@ -68,7 +68,7 @@ module.exports = (bp, messenger) => {
       if (e.postback.payload === 'GET_STARTED') {
         const mConfig = messenger.getConfig()
         if (mConfig.displayGetStarted && mConfig.autoRespondGetStarted) {
-          bp.messenger.pipeText(profile.id, mConfig.autoResponse)
+          bp.messenger.sendText(profile.id, mConfig.autoResponse)
         }
       }
     })

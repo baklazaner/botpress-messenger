@@ -269,7 +269,7 @@ const options = {
     typing: true
 }
 
-bp.messenger.pipeText(userId, text, options)
+bp.messenger.sendText(userId, text, options)
 ```
 
 ### Attachments
