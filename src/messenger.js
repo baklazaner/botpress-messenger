@@ -453,9 +453,10 @@ class Messenger extends EventEmitter {
             return
           }
           if (event.message && event.message.text) {
-            this._handleMessageEvent(event)
             if (event.message.quick_reply) {
               this._handleQuickReplyEvent(event)
+            } else {
+              this._handleMessageEvent(event)
             }
           } else if (event.message && event.message.attachments) {
             this._handleAttachmentEvent(event)

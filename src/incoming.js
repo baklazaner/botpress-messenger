@@ -15,9 +15,9 @@ module.exports = (bp, messenger) => {
     const userId = payload.sender.id
     const mid = payload.message && payload.message.mid
 
-    if (mid && messagesCache.has(mid)) {
+    if (mid && !messagesCache.has(mid)) {
       // We already processed this message
-      return Promise.resolve(null)
+      payload.alreadyProcessed = true
     } else {
       // Mark it as processed
       messagesCache.set(mid, true)
