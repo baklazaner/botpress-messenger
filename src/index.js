@@ -93,7 +93,7 @@ module.exports = {
     // regenerate a new ngrok url and update it to facebook
     if (config.ngrok && config.connected) {
       bp.logger.debug('[messenger] updating ngrok to facebook')
-      ngrok.getUrl()
+      ngrok.getUrl(bp.botfile.port)
       .then(url => {
         messenger.setConfig({ hostname: url.replace(/https:\/\//i, '') })
         saveConfigToFile(messenger.getConfig(), file)
