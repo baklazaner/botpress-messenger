@@ -145,7 +145,10 @@ class Messenger extends EventEmitter {
     return req()
   }
 
-  sendValidationRequest(applicationID, accessToken) {
+  sendValidationRequest() {
+    const applicationID = this.config.applicationID
+    const accessToken = this.config.accessToken
+
     return fetch(`https://graph.facebook.com/v2.7/${applicationID}/subscriptions_sample`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},

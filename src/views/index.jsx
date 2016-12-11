@@ -95,7 +95,7 @@ export default class MessengerModule extends React.Component {
   handleSaveChanges() {
     this.setState({ loading:true })
 
-    return this.getAxios().post('/api/botpress-messenger/config', _.omit(this.state, 'loading', 'initialStateHash', 'message'))
+    return this.getAxios().post('/api/botpress-messenger/config', _.omit(this.state, 'loading', 'initialStateHash', 'message', 'error'))
     .then(() => {
       this.setState({
         message: {
@@ -411,8 +411,8 @@ export default class MessengerModule extends React.Component {
   }
 
   renderConnectionValidation() {
-    const validatedText = <ControlLabel>All your connection settings are valid.</ControlLabel>
-    const button = <Button className={style.messengerButton} onClick={this.handleValidation}>Validate</Button>
+    // const validatedText = <ControlLabel>All your connection settings are valid.</ControlLabel>
+    // const button = <Button className={style.messengerButton} onClick={this.handleValidation}>Validate</Button>
 
     return <FormGroup>
         {this.renderLabel('Validation', this.state.homepage+'#5-validate-and-connect')}
@@ -465,8 +465,7 @@ export default class MessengerModule extends React.Component {
             {this.renderTextInput('App Secret', 'appSecret', this.state.homepage+'#2-get-app-id-and-app-secret', { disabled: this.state.connected })}
             {this.renderHostnameTextInput({ disabled: (this.state.ngrok || this.state.connected) })}
             {this.renderNGrokCheckbox( {disabled: this.state.connected} )}
-            {this.renderConnectionValidation()}
-            {this.state.validated && this.renderConnectionButton()}
+            {this.renderConnectionButton()}
           </div>
         </div>
 

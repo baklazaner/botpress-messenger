@@ -154,7 +154,7 @@ module.exports = {
 
     bp.getRouter('botpress-messenger')
     .post('/validation', (req, res) => {
-      messenger.sendValidationRequest(req.body.applicationID, req.body.accessToken)
+      messenger.sendValidationRequest()
       .then((json) => {
         res.send(json)
       })
