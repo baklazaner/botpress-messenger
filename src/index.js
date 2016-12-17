@@ -50,7 +50,7 @@ var saveConfigToFile = (config, file) => {
 }
 
 let messenger = null
-const outgoingPending = {}
+const outgoingPending = outgoing.pending
 
 const outgoingMiddleware = (event, next) => {
   if (event.platform !== 'facebook') {
@@ -61,10 +61,22 @@ const outgoingMiddleware = (event, next) => {
     return next('Unsupported event type: ' + event.type)
   }
 
-  const setValue = (method) => (...args) => {
+  const setValue = method => (...args) => {
     if (event.__id && outgoingPending[event.__id]) {
-      outgoingPending[event.__id][method].apply(null, args)
-      delete outgoingPending[event.__id]
+
+      if (args && args[0] && args[0].message_id) {
+        let ts = args[0].message_id.split(':')[0]
+        ts = ts && ts.substr(4)
+        outgoingPending[event.__id].timestamp = parseInt(ts)
+        outgoingPending[event.__id].mid = args[0].message_id
+      }
+
+      if (method === 'resolve' && (event.raw.waitDelivery || event.raw.waitRead)) {
+        // We skip setting this value because we wait
+      } else {
+        outgoingPending[event.__id][method].apply(null, args)
+        delete outgoingPending[event.__id]
+      }
     }
   }
   
@@ -91,7 +103,7 @@ module.exports = {
       bp.messenger[sendName] = Promise.method(function() {
         var msg = action.apply(this, arguments)
         msg.__id = new Date().toISOString() + Math.random()
-        const resolver = {}
+        const resolver = { event: msg }
         
         const promise = new Promise(function(resolve, reject) {
           resolver.resolve = resolve

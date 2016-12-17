@@ -118,22 +118,11 @@ class Messenger extends EventEmitter {
   }
 
   sendMessage(recipientId, message, options) {
-    const onDelivery = options && options.onDelivery
-    const onRead = options && options.onRead
     const req = () => this.sendRequest({
       recipient: {
         id: recipientId
       },
       message
-    })
-    .then((json) => {
-      if (typeof onDelivery === 'function') {
-        this.once('delivery', onDelivery)
-      }
-      if (typeof onRead === 'function') {
-        this.once('read', onRead)
-      }
-      return json
     })
 
     if (options && options.typing) {

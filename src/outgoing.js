@@ -1,123 +1,79 @@
-const handleText = (event, next, messenger) => {
-  return messenger.sendTextMessage(
-    event.raw.to,
-    event.raw.message,
-    event.raw.quick_replies,
-    event.raw)
-  .then(() => next())
+const handlePromise = (next, promise) => {
+  return promise.then(res => {
+    next()
+    return res
+  })
   .catch(err => {
     next(err)
     throw err
   })
 }
 
+const handleText = (event, next, messenger) => {
+  return handlePromise(next, messenger.sendTextMessage(
+    event.raw.to,
+    event.raw.message,
+    event.raw.quick_replies,
+    event.raw))
+}
+
 const handleAttachment = (event, next, messenger) => {
-  return messenger.sendAttachment(
+  return handlePromise(next, messenger.sendAttachment(
     event.raw.to,
     event.raw.type,
     event.raw.url,
     event.raw.quick_replies,
-    event.raw)
-  .then(() => next())
-  .catch(err => {
-    next(err)
-    throw err
-  })
+    event.raw))
 }
 
 const handleTemplate = (event, next, messenger) => {
-  return messenger.sendTemplate(
+  return handlePromise(next, messenger.sendTemplate(
     event.raw.to,
     event.raw.payload,
-    event.raw)
-  .then(() => next())
-  .catch(err => {
-    next(err)
-    throw err
-  })
+    event.raw))
 }
 
 const handleTyping = (event, next, messenger) => {
-  return messenger.sendTypingIndicator(
+  return handlePromise(next, messenger.sendTypingIndicator(
     event.raw.to,
-    event.raw.typing)
-  .then(() => next())
-  .catch(err => {
-    next(err)
-    throw err
-  })
+    event.raw.typing))
 }
 
 const handleSeen = (event, next, messenger) => {
-  return messenger.sendAction(event.raw.to, 'mark_seen')
-  .then(() => next())
-  .catch(err => {
-    next(err)
-    throw err
-  })
+  return handlePromise(next, 
+    messenger.sendAction(event.raw.to, 'mark_seen'))
 }
 
 const handleGetStarted = (event, next, messenger) => {
   if (event.raw.enabled) {
-    return messenger.setGetStartedButton(event.raw.postback)
-    .then(() => next())
-    .catch(err => {
-      next(err)
-      throw err
-    })
+    return handlePromise(next, 
+      messenger.setGetStartedButton(event.raw.postback))
   } else {
-    return messenger.deleteGetStartedButton()
-    .then(() => next())
-    .catch(err => {
-      next(err)
-      throw err
-    })
+    return handlePromise(next, messenger.deleteGetStartedButton())
   }
 }
 
 const handlePersistentMenu = (event, next, messenger) => {
   if (event.raw.delete) {
-    return messenger.deletePersistentMenu()
-    .then(() => next())
-    .catch(err => {
-      next(err)
-      throw err
-    })
+    return handlePromise(next, messenger.deletePersistentMenu())
   } else {
-    return messenger.setPersistentMenu(event.raw.elements)
-    .then(() => next())
-    .catch(err => {
-      next(err)
-      throw err
-    })
+    return handlePromise(next, 
+      messenger.setPersistentMenu(event.raw.elements))
   }
 }
 
 const handleGreetingText = (event, next, messenger) => {
   if (event.raw.text) {
-    return messenger.setGreetingText(event.raw.text)
-    .then(() => next())
-    .catch(err => {
-      next(err)
-      throw err
-    })
+    return handlePromise(next, 
+      messenger.setGreetingText(event.raw.text))
   } else {
-    return messenger.deleteGreetingText(event.raw.text)
-    .then(() => next())
-    .catch(err => {
-      next(err)
-      throw err
-    })
+    return handlePromise(next, messenger.deleteGreetingText(event.raw.text))
   }
 }
 
 const handleWhitelistedDomains = (event, next, messenger) => {
-  return messenger.setWhitelistedDomains(event.raw.domains)
-  .then(() => next())
-  .catch(err => {
-    next(err)
-    throw err
-  })
+  return handlePromise(next, 
+    messenger.setWhitelistedDomains(event.raw.domains))
 }
 
 module.exports = {
@@ -129,5 +85,6 @@ module.exports = {
   'greeting_text': handleGreetingText,
   'persistent_menu': handlePersistentMenu,
   'whitelisted_domains': handleWhitelistedDomains,
-  'get_started': handleGetStarted
+  'get_started': handleGetStarted,
+  pending: {}
 }

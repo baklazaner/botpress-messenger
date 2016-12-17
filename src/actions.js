@@ -95,7 +95,9 @@ const createText = (userId, text, options) => {
       to: userId,
       message: text,
       typing: (options && options.typing),
-      quick_replies: options && options.quick_replies
+      quick_replies: options && options.quick_replies,
+      waitRead: options.waitRead,
+      waitDelivery: options.waitDelivery
     }
   }
 }
@@ -122,7 +124,9 @@ const createAttachment = (userId, type, url, options) => {
       type: type,
       url: url,
       typing: (options && options.typing),
-      quick_replies: options && options.quick_replies
+      quick_replies: options && options.quick_replies,
+      waitRead: options.waitRead,
+      waitDelivery: options.waitDelivery
     }
   }
 }
@@ -142,7 +146,9 @@ const createTemplate = (userId, payload, options) => {
     raw: {
       to: userId,
       payload: payload,
-      typing: (options && options.typing)
+      typing: (options && options.typing),
+      waitRead: options.waitRead,
+      waitDelivery: options.waitDelivery
     }
   }
 }
