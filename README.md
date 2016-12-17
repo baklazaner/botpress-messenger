@@ -234,7 +234,7 @@ By using our module, you can send anything you want to your users on Messenger. 
 
 In code, it is simple to send a message text to a specific users ([facebook doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message)).
 
-#### sendText(userId, text, [options])
+#### `sendText(userId, text, [options])` -> Promise
 
 ##### Arguments
 
@@ -242,11 +242,15 @@ In code, it is simple to send a message text to a specific users ([facebook doc]
 
 2. ` text ` (_String_): Text message that will be send to user.
 
-3. ` options ` (_Object_): An object that may contains `quick_replies` or `typing` indicator. These specific options will be added to the associated message. 
+3. ` options ` (_Object_): An object that may contain: 
+- `quick_replies` which is an array of quick replies to attach to the message
+- `typing` indicator. true for automatic timing calculation or a number in milliseconds (turns off automatically)
+- `waitDelivery` the returning Promise will resolve only when the message is delivered to the user
+- `waitRead` the returning Promise will resolve only when the user reads the message
 
 ##### Returns
 
-(_Void_): Send to outgoing middlewares a formatted `Object` than contains all information (platform, type, text, raw) about the text message that needs to be sent to Messenger platform.
+(_Promise_): Send to outgoing middlewares a formatted `Object` than contains all information (platform, type, text, raw) about the text message that needs to be sent to Messenger platform. The promise resolves when the message was successfully sent to facebook, except if you set the `waitDelivery` or `waitRead` options.
 
 ##### Example
 
@@ -254,29 +258,33 @@ In code, it is simple to send a message text to a specific users ([facebook doc]
 const userId = 'USER_ID'
 const text = "Select between these two options?"
 const options = {
-    quick_replies: [
-        {
-            content_type: "text",
-            title: "Option 1",
-            payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_OPTION_1"
-        },
-        {
-            content_type:"text",
-            title:"Option 2",
-            payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_OPTION_2"
-        }
-    ],
-    typing: true
+  quick_replies: [
+    {
+      content_type: "text",
+      title: "Option 1",
+      payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_OPTION_1"
+    },
+    {
+      content_type:"text",
+      title:"Option 2",
+      payload: "DEVELOPER_DEFINED_PAYLOAD_FOR_OPTION_2"
+    }
+  ],
+  typing: true,
+  waitRead: true
 }
 
 bp.messenger.sendText(userId, text, options)
+.then(() => {
+  // the message was read because of `waitRead` option  
+})
 ```
 
 ### Attachments
 
 By using this function, you can send any type of attachment to your users ([facebook doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes)).
 
-#### sendAttachment(userId, type, url, [options])
+#### `sendAttachment(userId, type, url, [options])` -> Promise
 
 ##### Arguments
 
@@ -286,11 +294,15 @@ By using this function, you can send any type of attachment to your users ([face
 
 3. ` url ` (_String_): Correspond to specific url of the attachment that need to be sent.
 
-4. ` options ` (_Object_): An object that may contains `quick_replies` or `typing` indicator. These specific options will be added to the associated attachment. 
+4. ` options ` (_Object_): An object that may contain:
+- `quick_replies`
+- `typing`
+- `waitDelivery` the returning Promise will resolve only when the message is delivered to the user
+- `waitRead` the returning Promise will resolve only when the user reads the message
 
 ##### Returns
 
-(_Void_): Send to outgoing middlewares a formatted `Object` than contains all information (platform, type, text, raw) about the attachment that needs to be sent to Messenger platform.
+(_Promise_): Send to outgoing middlewares a formatted `Object` than contains all information (platform, type, text, raw) about the attachment that needs to be sent to Messenger platform.
 
 ##### Example
 
@@ -306,7 +318,7 @@ bp.messenger.sendAttachment(userId, type, url)
 
 By using this module, it's easy to send any type of supported template to your users ([facebook doc](https://developers.facebook.com/docs/messenger-platform/send-api-reference/templates)).
 
-#### sendTemplate(userId, payload, [options])
+#### `sendTemplate(userId, payload, [options])` -> Promise
 
 ##### Arguments
 
@@ -314,11 +326,14 @@ By using this module, it's easy to send any type of supported template to your u
 
 2. ` payload ` (_Object_): Specific `payload` object for your selected template. Actually, many types of template (button, generic, list, receipt...) are supported by Messenger.
 
-3. ` options ` (_Object_): An object that may contains `typing` indicator. It's not possible to add `quick_replies` to a template.
+3. ` options ` (_Object_): An object that may contains:
+- `typing`
+- `waitDelivery` the returning Promise will resolve only when the message is delivered to the user
+- `waitRead` the returning Promise will resolve only when the user reads the message
 
 ##### Returns
 
-(_Void_): Send to outgoing middlewares a formatted `Object` than contains all information (platform, type, text, raw) about the template that needs to be sent.
+(_Promise_): Send to outgoing middlewares a formatted `Object` than contains all information (platform, type, text, raw) about the template that needs to be sent.
 
 ##### Example
 
@@ -336,7 +351,7 @@ const payload = {
     ]
 }
 
-bp.messenger.sendTemplate(userId, payload)
+bp.messenger.sendTemplate(userId, payload, { typing: 2000 })
 ```
 
 #### Quick replies
@@ -354,7 +369,7 @@ const options = {
 }
 ``` 
 
-#### Automatic typing indicator
+// Automatic typing indicator
 
 As quick replies, you can add an automatic typing indicator to your messages by adding `typing` to `options` argument.
 
