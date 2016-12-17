@@ -61,7 +61,7 @@ const outgoingMiddleware = (event, next) => {
     return next('Unsupported event type: ' + event.type)
   }
 
-  const fulfill = (method) => (...args) => {
+  const setValue = (method) => (...args) => {
     if (event.__id && outgoingPending[event.__id]) {
       outgoingPending[event.__id][method].apply(null, args)
       delete outgoingPending[event.__id]
@@ -69,7 +69,7 @@ const outgoingMiddleware = (event, next) => {
   }
   
   outgoing[event.type](event, next, messenger)
-  .then(fulfill('resolve'), fulfill('reject'))
+  .then(setValue('resolve'), setValue('reject'))
 }
 
 module.exports = {
