@@ -2,6 +2,7 @@ const path = require('path')
 const fs = require('fs')
 const _ = require('lodash')
 const uuid = require('uuid')
+const Promise = require('bluebird')
 
 const Messenger = require('./messenger')
 const actions = require('./actions')
@@ -49,6 +50,7 @@ var saveConfigToFile = (config, file) => {
 }
 
 let messenger = null
+const outgoingPending = {}
 
 const outgoingMiddleware = (event, next) => {
   if (event.platform !== 'facebook') {
@@ -59,7 +61,15 @@ const outgoingMiddleware = (event, next) => {
     return next('Unsupported event type: ' + event.type)
   }
 
+  const fulfill = (method) => (...args) => {
+    if (event.__id && outgoingPending[event.__id]) {
+      outgoingPending[event.__id][method].apply(null, args)
+      delete outgoingPending[event.__id]
+    }
+  }
+  
   outgoing[event.type](event, next, messenger)
+  .then(fulfill('resolve'), fulfill('reject'))
 }
 
 module.exports = {
@@ -78,10 +88,21 @@ module.exports = {
     bp.messenger = {}
     _.forIn(actions, (action, name) => {
       var sendName = name.replace(/^create/, 'send')
-      bp.messenger[sendName] = function() {
+      bp.messenger[sendName] = Promise.method(function() {
         var msg = action.apply(this, arguments)
+        msg.__id = new Date().toISOString() + Math.random()
+        const resolver = {}
+        
+        const promise = new Promise(function(resolve, reject) {
+          resolver.resolve = resolve
+          resolver.reject = reject
+        })
+        
+        outgoingPending[msg.__id] = resolver
+        
         bp.middlewares.sendOutgoing(msg)
-      }
+        return promise
+      })
     })
   },
   ready: function(bp) {
