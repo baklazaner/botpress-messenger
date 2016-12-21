@@ -19,7 +19,7 @@ const ngrok = require('./ngrok')
  * @param {string} file - the file path
  * @return {Object} config object
  */
-const loadConfigFromFile = (file) => {
+const loadConfigFromFile = file => {
 
   if (!fs.existsSync(file)) {
     const config = {
@@ -40,9 +40,33 @@ const loadConfigFromFile = (file) => {
       autoRespondGetStarted: true,
       autoResponse: 'Hello!'
     }
-    saveConfigToFile(config,file)
+    saveConfigToFile(config, file)
   }
-  return JSON.parse(fs.readFileSync(file, 'utf-8'))
+
+  return overwriteConfig(file)
+}
+
+const overwriteConfig = file => {
+  let config = JSON.parse(fs.readFileSync(file))
+
+  if (!config.verifyToken || config.verifyToken.length <= 1) {
+    config.verifyToken = uuid.v4()
+    saveConfigToFile(config, file)
+  }
+
+  if (process.env.MESSENGER_APP_ID) {
+    config.applicationID = process.env.MESSENGER_APP_ID
+  }
+
+  if (process.env.MESSENGER_ACCESS_TOKEN) {
+    config.accessToken = process.env.MESSENGER_ACCESS_TOKEN
+  }
+
+  if (process.env.MESSENGER_APP_SECRET) {
+    config.appSecret = process.env.MESSENGER_APP_SECRET
+  }
+
+  return config
 }
 
 var saveConfigToFile = (config, file) => {
