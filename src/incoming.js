@@ -45,13 +45,21 @@ module.exports = (bp, messenger) => {
   messenger.on('attachment', e => {
     preprocessEvent(e)
     .then(profile => {
-
       bp.middlewares.sendIncoming({
         platform: 'facebook',
         type: 'attachments',
         user: profile,
-        text: e.message.attachments,
+        text: e.message.attachments.length + ' attachments',
         raw: e
+      })
+      e.message.attachments.forEach(att => {
+        bp.middlewares.sendIncoming({
+          platform: 'facebook',
+          type: att.type,
+          user: profile,
+          text: att.payload.url,
+          raw: att
+        })
       })
     })
   })

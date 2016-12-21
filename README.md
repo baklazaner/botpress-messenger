@@ -156,15 +156,39 @@ bp.hear('hello')
 
 #### Attachments
 
+The original attachments messenger event. May contain multiple attachments. Individual attachments are also emmited individually (see Image, Video, File below)
+
 ```js
 {
   platform: 'facebook',
   type: 'attachments',
   user: profile,
-  text: e.message.attachments,
+  text: e.message.attachments.length,
   raw: e
 }
 ```
+
+##### Image
+
+Individual Attachment extracted from the Attachments event.
+
+Note that Stickers, Thumbs Up, GIFs and Pictures are considered images too.
+
+```js
+{
+  platform: 'facebook',
+  type: 'image', // Same for 'video', 'file' and 'audio'
+  user: profile,
+  text: 'http://www.image.url',
+  raw: { type: 'image', payload: { url: '...' }}
+}
+```
+
+##### Audio
+##### Video
+##### File
+
+Same signature as `Image` above.
 
 #### Referrals
 
