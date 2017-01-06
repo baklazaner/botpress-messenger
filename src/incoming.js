@@ -57,7 +57,9 @@ module.exports = (bp, messenger) => {
           platform: 'facebook',
           type: att.type,
           user: profile,
-          text: att.payload.url,
+          text: att.payload.url ?
+            att.payload.url
+            : JSON.stringify(att.payload),
           raw: att
         })
       })
