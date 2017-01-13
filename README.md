@@ -90,7 +90,6 @@ You can listen to incoming event easily with Botpress by using `bp` built-in `he
 ```js
 bp.hear({ platform: 'facebook', type: 'postback', text: 'GET_STARTED' }, (event, next) => {
       bp.messenger.pipeText(event.user.id, 'Welcome on Botpress!!!')
-   }
 })
 ```
 
